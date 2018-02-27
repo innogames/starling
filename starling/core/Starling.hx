@@ -10,6 +10,7 @@
 
 package starling.core;
 
+import openfl.profiler.Profiler;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage3D;
@@ -481,6 +482,7 @@ class Starling extends EventDispatcher
      * and <code>render()</code>. */
     public function nextFrame():Void
     {
+        Profiler.begin("starling-nextFrame");
         var now:Float = Lib.getTimer() / 1000.0;
         var passedTime:Float = now - mLastFrameTimestamp;
         mLastFrameTimestamp = now;
@@ -493,6 +495,7 @@ class Starling extends EventDispatcher
 
         advanceTime(passedTime);
         render();
+        Profiler.end();
     }
     
     /** Dispatches ENTER_FRAME events on the display list, advances the Juggler 
@@ -517,6 +520,7 @@ class Starling extends EventDispatcher
      * rendered.</p> */
     public function render():Void
     {
+        Profiler.begin("starling-render");
         if (!contextValid)
             return;
         
@@ -551,6 +555,7 @@ class Starling extends EventDispatcher
         
         if (!mShareContext)
             mContext.present();
+        Profiler.end();
     }
     
     private function updateViewPort(forceUpdate:Bool=false):Void
