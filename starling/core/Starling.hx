@@ -547,8 +547,10 @@ class Starling extends EventDispatcher
         if (!mShareContext)
             RenderSupport._clear(mStage.color, 1.0);
         
+        Profiler.begin("starling-stage-render");
         mStage.render(mSupport, 1.0);
         mSupport.finishQuadBatch();
+        Profiler.end();
         
         if (mStatsDisplay != null)
             mStatsDisplay.drawCount = mSupport.drawCount;
