@@ -278,8 +278,7 @@ class QuadBatch extends DisplayObject
                                       Context3DVertexBufferFormat.FLOAT_2);
         }
         
-        //context.drawTriangles(mIndexBuffer, 0, mNumQuads * 2);
-        context.drawTrianglesFromVertices(mVertexBuffer, 0, mVertexData.numVertices);
+        context.drawTriangles(mIndexBuffer, 0, mNumQuads * 2);
         
         if (mTexture != null)
         {
