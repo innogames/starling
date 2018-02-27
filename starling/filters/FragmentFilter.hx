@@ -313,8 +313,8 @@ class FragmentFilter
             context.setTextureAt(mBaseTextureID, passTexture.base);
             
             activate(i, context, passTexture);
-            context.drawTriangles(mIndexBuffer, 0, 2);
-            // context.drawTrianglesFromVertices (mVertexBuffer, 0, 2);
+            //context.drawTriangles(mIndexBuffer, 0, 2);
+            context.drawTrianglesFromVertices (mVertexBuffer, 0, 2);
             deactivate(i, context, passTexture);
         }
         
