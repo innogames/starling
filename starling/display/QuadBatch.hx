@@ -10,6 +10,7 @@
 
 package starling.display;
 
+import openfl.profiler.Profiler;
 import flash.errors.Error;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DBufferUsage;
@@ -250,6 +251,8 @@ class QuadBatch extends DisplayObject
                                  blendMode:String=null):Void
     {
         if (mNumQuads == 0) return;
+        
+        Profiler.begin("renderCustom");
         if (mSyncRequired) __syncBuffers();
         
         var pma:Bool = mVertexData.premultipliedAlpha;
@@ -288,6 +291,7 @@ class QuadBatch extends DisplayObject
         
         context.setVertexBufferAt(1, null);
         context.setVertexBufferAt(0, null);
+        Profiler.end();
     }
     
     /** Resets the batch. The vertex- and index-buffers remain their size, so that they
