@@ -252,7 +252,7 @@ class QuadBatch extends DisplayObject
     {
         if (mNumQuads == 0) return;
         
-        Profiler.begin("renderCustom");
+       #if profiling  Profiler.begin("renderCustom"); #end
         if (mSyncRequired) __syncBuffers();
         
         var pma:Bool = mVertexData.premultipliedAlpha;
@@ -291,7 +291,7 @@ class QuadBatch extends DisplayObject
         
         context.setVertexBufferAt(1, null);
         context.setVertexBufferAt(0, null);
-        Profiler.end();
+       #if profiling  Profiler.end(); #end
     }
     
     /** Resets the batch. The vertex- and index-buffers remain their size, so that they

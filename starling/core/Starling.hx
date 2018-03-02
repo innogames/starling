@@ -520,7 +520,7 @@ class Starling extends EventDispatcher
      * rendered.</p> */
     public function render():Void
     {
-        Profiler.begin("starling-render");
+        #if profiling  Profiler.begin("starling-render"); #end
         if (!contextValid)
             return;
         
@@ -547,17 +547,17 @@ class Starling extends EventDispatcher
         if (!mShareContext)
             RenderSupport._clear(mStage.color, 1.0);
         
-        Profiler.begin("starling-stage-render");
+        #if profiling Profiler.begin("starling-stage-render"); #end
         mStage.render(mSupport, 1.0);
         mSupport.finishQuadBatch();
-        Profiler.end();
+        #if profiling Profiler.end(); #end
         
         if (mStatsDisplay != null)
             mStatsDisplay.drawCount = mSupport.drawCount;
         
         if (!mShareContext)
             mContext.present();
-        Profiler.end();
+        #if profiling Profiler.end(); #end
     }
     
     private function updateViewPort(forceUpdate:Bool=false):Void
