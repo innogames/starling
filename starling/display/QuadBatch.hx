@@ -71,6 +71,7 @@ import starling.utils.VertexData;
 @:access(openfl.display3D.Context3D)
 @:access(openfl.display3D.VertexBuffer3D)
 @:access(openfl.display3D.IndexBuffer3D)
+@:access(openfl.display3D.Context3D)
 class QuadBatch extends DisplayObject
 {
     /** The maximum number of quads that can be displayed by one QuadBatch. */
@@ -205,7 +206,11 @@ class QuadBatch extends DisplayObject
 
         var context:Context3D = Starling.current.context;
         var gl = context.__renderSession.gl;
-        vao = gl.createVertexArray(); 
+        if (Context3D.VECTOR_ARRAY_OBJECT_EXTENSION != null) {
+            vao = Context3D.VECTOR_ARRAY_OBJECT_EXTENSION.createVertexArrayOES();
+        } else {
+            vao = gl.createVertexArray();
+        }
         
         var numVertices:Int = mVertexData.numVertices;
         var numIndices:Int = mIndexData.length;
@@ -256,11 +261,19 @@ class QuadBatch extends DisplayObject
         initVAO();
     }
     
+    private function bindVAO(vao): Void {
+        if (Context3D.VECTOR_ARRAY_OBJECT_EXTENSION != null) {
+            Context3D.VECTOR_ARRAY_OBJECT_EXTENSION.bindVertexArrayOES(vao);
+        } else {
+            Starling.current.context.__renderSession.gl.bindVertexArray(vao);
+        }
+    }
+    
     private function initVAO(): Void {
         var context:Context3D = Starling.current.context;
         var gl = context.__renderSession.gl;
-       // vao = gl.createVertexArray();
-        gl.bindVertexArray(vao);
+     
+        bindVAO(vao);
         enableVertexAttributes(mVertexBuffer);
         gl.bindBuffer (gl.ARRAY_BUFFER, mVertexBuffer.__id);
         var stride = mVertexBuffer.__stride;
@@ -295,7 +308,7 @@ class QuadBatch extends DisplayObject
         context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mvpMatrix, true);
         
        var gl = context.__renderSession.gl;
-        if (!mSyncRequired) gl.bindVertexArray(vao);
+        if (!mSyncRequired) bindVAO(vao);
         
       /*  context.setVertexBufferAt(0, mVertexBuffer, VertexData.POSITION_OFFSET, 
                                   Context3DVertexBufferFormat.FLOAT_2); 
@@ -321,7 +334,7 @@ class QuadBatch extends DisplayObject
         
        // context.setVertexBufferAt(1, null);
         //context.setVertexBufferAt(0, null);
-        gl.bindVertexArray(null);
+        bindVAO(null);
         Profiler.end();
     }
     
