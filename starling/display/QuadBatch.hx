@@ -10,6 +10,7 @@
 
 package starling.display;
 
+import lime.graphics.opengl.GLVertexArrayObject;
 import openfl.profiler.Profiler;
 import flash.errors.Error;
 import flash.display3D.Context3D;
@@ -67,12 +68,16 @@ import starling.utils.VertexData;
  *
  *  @see Sprite  
  */
+@:access(openfl.display3D.Context3D)
+@:access(openfl.display3D.VertexBuffer3D)
+@:access(openfl.display3D.IndexBuffer3D)
 class QuadBatch extends DisplayObject
 {
     /** The maximum number of quads that can be displayed by one QuadBatch. */
     public static inline var MAX_NUM_QUADS:Int = 16383;
     
     private static inline var QUAD_PROGRAM_NAME:String = "QB_q";
+    private static var dummyVB: VertexBuffer3D;
     
     private var mNumQuads:Int;
     private var mSyncRequired:Bool;
@@ -92,6 +97,7 @@ class QuadBatch extends DisplayObject
      * 'onVertexDataChanged' to upload the changes to the vertex buffers. Don't change the
      * size of this object manually; instead, use the 'capacity' property of the QuadBatch. */
     private var mVertexData:VertexData;
+    private var vao:GLVertexArrayObject;
 
     /** Helper objects. */
     private static var sHelperMatrix:Matrix = new Matrix();
@@ -197,6 +203,10 @@ class QuadBatch extends DisplayObject
     {
         __destroyBuffers();
 
+        var context:Context3D = Starling.current.context;
+        var gl = context.__renderSession.gl;
+        vao = gl.createVertexArray(); 
+        
         var numVertices:Int = mVertexData.numVertices;
         var numIndices:Int = mIndexData.length;
         var context:Context3D = Starling.current.context;
@@ -241,7 +251,23 @@ class QuadBatch extends DisplayObject
             // GPU hardware (iOS!), this is slower than updating the complete buffer.
             mVertexBuffer.uploadFromTypedArray(mVertexData.rawData);
             mSyncRequired = false;
+            
         }
+        initVAO();
+    }
+    
+    private function initVAO(): Void {
+        var context:Context3D = Starling.current.context;
+        var gl = context.__renderSession.gl;
+       // vao = gl.createVertexArray();
+        gl.bindVertexArray(vao);
+        enableVertexAttributes(mVertexBuffer);
+        gl.bindBuffer (gl.ARRAY_BUFFER, mVertexBuffer.__id);
+        var stride = mVertexBuffer.__stride;
+        gl.vertexAttribPointer (0, 2, gl.FLOAT, false, stride, VertexData.POSITION_OFFSET * 4);
+        gl.vertexAttribPointer (1, 4, gl.FLOAT, false, stride, VertexData.COLOR_OFFSET * 4);
+        gl.vertexAttribPointer (2, 2, gl.FLOAT, false, stride, VertexData.TEXCOORD_OFFSET * 4);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mIndexBuffer.__id);
     }
     
     /** Renders the current batch with custom settings for model-view-projection matrix, alpha 
@@ -267,33 +293,75 @@ class QuadBatch extends DisplayObject
         context.setProgram(__getProgram(tinted));
         context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, sRenderAlpha, 1);
         context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mvpMatrix, true);
-        context.setVertexBufferAt(0, mVertexBuffer, VertexData.POSITION_OFFSET, 
+        
+       var gl = context.__renderSession.gl;
+        if (!mSyncRequired) gl.bindVertexArray(vao);
+        
+      /*  context.setVertexBufferAt(0, mVertexBuffer, VertexData.POSITION_OFFSET, 
                                   Context3DVertexBufferFormat.FLOAT_2); 
         
         if (mTexture == null || tinted)
             context.setVertexBufferAt(1, mVertexBuffer, VertexData.COLOR_OFFSET, 
-                                      Context3DVertexBufferFormat.FLOAT_4);
+                                      Context3DVertexBufferFormat.FLOAT_4);*/
         
         if (mTexture != null)
         {
             context.setTextureAt(0, mTexture.base);
-            context.setVertexBufferAt(2, mVertexBuffer, VertexData.TEXCOORD_OFFSET, 
-                                      Context3DVertexBufferFormat.FLOAT_2);
+           // context.setVertexBufferAt(2, mVertexBuffer, VertexData.TEXCOORD_OFFSET, 
+                                //      Context3DVertexBufferFormat.FLOAT_2);
         }
         
         context.drawTriangles(mIndexBuffer, 0, mNumQuads * 2);
         
-        if (mTexture != null)
+       if (mTexture != null)
         {
             context.setTextureAt(0, null);
-            context.setVertexBufferAt(2, null);
+           // context.setVertexBufferAt(2, null);
         }
         
-        context.setVertexBufferAt(1, null);
-        context.setVertexBufferAt(0, null);
+       // context.setVertexBufferAt(1, null);
+        //context.setVertexBufferAt(0, null);
+        gl.bindVertexArray(null);
         Profiler.end();
     }
     
+    private static var _vertexAttributesEnabled: Bool = false;
+    public static function enableVertexAttributes(vertexBuffer): Void {
+      //  if (_vertexAttributesEnabled) return;
+        _vertexAttributesEnabled = true;
+         var context:Context3D = Starling.current.context;
+     /*  // if (dummyVB == null)  dummyVB =  context.createVertexBuffer(1, VertexData.ELEMENTS_PER_VERTEX);
+         context.setVertexBufferAt(0, vertexBuffer, VertexData.POSITION_OFFSET, 
+                                  Context3DVertexBufferFormat.FLOAT_2);
+        context.setVertexBufferAt(1, vertexBuffer, VertexData.COLOR_OFFSET, 
+                                      Context3DVertexBufferFormat.FLOAT_4);
+        context.setVertexBufferAt(2, vertexBuffer, VertexData.TEXCOORD_OFFSET, 
+                                      Context3DVertexBufferFormat.FLOAT_2);
+        */
+        var gl = context.__renderSession.gl;
+		
+		gl.enableVertexAttribArray (0);
+		gl.enableVertexAttribArray (1);
+		gl.enableVertexAttribArray (2);
+		
+    }
+    
+     public static function disableVertexAttributes(): Void {
+       // if (!_vertexAttributesEnabled) return;
+        _vertexAttributesEnabled = false;
+         var context:Context3D = Starling.current.context;
+         /*    context.setTextureAt(0, null);
+            context.setVertexBufferAt(2, null);
+            context.setVertexBufferAt(1, null);
+            context.setVertexBufferAt(0, null);*/
+         
+          var gl = context.__renderSession.gl;
+         gl.disableVertexAttribArray (2);
+         gl.disableVertexAttribArray (1);
+         gl.disableVertexAttribArray (0);
+         gl.bindBuffer (gl.ARRAY_BUFFER, null);
+         gl.bindVertexArray(null);
+    }
     /** Resets the batch. The vertex- and index-buffers remain their size, so that they
      * can be reused quickly. */
     public function reset():Void
