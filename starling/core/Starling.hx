@@ -482,7 +482,7 @@ class Starling extends EventDispatcher
      * and <code>render()</code>. */
     public function nextFrame():Void
     {
-        Profiler.begin("starling-nextFrame");
+         #if profiling Profiler.begin("starling-nextFrame"); #end
         var now:Float = Lib.getTimer() / 1000.0;
         var passedTime:Float = now - mLastFrameTimestamp;
         mLastFrameTimestamp = now;
@@ -495,7 +495,7 @@ class Starling extends EventDispatcher
 
         advanceTime(passedTime);
         render();
-        Profiler.end();
+        #if profiling Profiler.end(); #end
     }
     
     /** Dispatches ENTER_FRAME events on the display list, advances the Juggler 
