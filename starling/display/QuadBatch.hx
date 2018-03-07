@@ -10,6 +10,7 @@
 
 package starling.display;
 
+import starling.utils.VAOHelper;
 import lime.graphics.opengl.GLVertexArrayObject;
 #if profiling   
 import openfl.profiler.Profiler; 
@@ -206,16 +207,10 @@ class QuadBatch extends DisplayObject
         __destroyBuffers();
 
         var context:Context3D = Starling.current.context;
-        var gl = context.__renderSession.gl;
-        if (Context3D.VECTOR_ARRAY_OBJECT_EXTENSION != null) {
-            vao = Context3D.VECTOR_ARRAY_OBJECT_EXTENSION.createVertexArrayOES();
-        } else {
-            vao = gl.createVertexArray();
-        }
+        vao = VAOHelper.createVAO(context.__renderSession.gl);
         
         var numVertices:Int = mVertexData.numVertices;
         var numIndices:Int = mIndexData.length;
-        var context:Context3D = Starling.current.context;
 
         if (numVertices == 0) return;
         if (context == null)  throw new MissingContextError();
@@ -262,19 +257,12 @@ class QuadBatch extends DisplayObject
         initVAO();
     }
     
-    private function bindVAO(vao): Void {
-        if (Context3D.VECTOR_ARRAY_OBJECT_EXTENSION != null) {
-            Context3D.VECTOR_ARRAY_OBJECT_EXTENSION.bindVertexArrayOES(vao);
-        } else {
-            Starling.current.context.__renderSession.gl.bindVertexArray(vao);
-        }
-    }
-    
     private function initVAO(): Void {
         var context:Context3D = Starling.current.context;
         var gl = context.__renderSession.gl;
      
-        bindVAO(vao);
+        VAOHelper.bindVAO(gl, vao);
+        
         enableVertexAttributes(mVertexBuffer);
         gl.bindBuffer (gl.ARRAY_BUFFER, mVertexBuffer.__id);
         var stride = mVertexBuffer.__stride;
@@ -309,7 +297,7 @@ class QuadBatch extends DisplayObject
         context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mvpMatrix, true);
         
        var gl = context.__renderSession.gl;
-        if (!mSyncRequired) bindVAO(vao);
+        if (!mSyncRequired) VAOHelper.bindVAO(gl, vao);
         
       /*  context.setVertexBufferAt(0, mVertexBuffer, VertexData.POSITION_OFFSET, 
                                   Context3DVertexBufferFormat.FLOAT_2); 
@@ -335,7 +323,7 @@ class QuadBatch extends DisplayObject
         
        // context.setVertexBufferAt(1, null);
         //context.setVertexBufferAt(0, null);
-        bindVAO(null);
+        VAOHelper.clear(gl);
          #if profiling  Profiler.end(); #end
     }
     
@@ -374,7 +362,7 @@ class QuadBatch extends DisplayObject
          gl.disableVertexAttribArray (1);
          gl.disableVertexAttribArray (0);
          gl.bindBuffer (gl.ARRAY_BUFFER, null);
-         gl.bindVertexArray(null);
+         VAOHelper.clear(gl);
     }
     /** Resets the batch. The vertex- and index-buffers remain their size, so that they
      * can be reused quickly. */

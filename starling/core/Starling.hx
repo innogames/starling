@@ -13,6 +13,7 @@ package starling.core;
 #if profiling   
 import openfl.profiler.Profiler; 
 #end
+import starling.utils.VAOHelper;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage3D;
@@ -192,6 +193,7 @@ import starling.utils.VAlign;
  *  information about this topic.</p>
  * 
  */ 
+@:access(openfl.display3D.Context3D)
 class Starling extends EventDispatcher
 {
     /** The version of the Starling framework. */
@@ -450,7 +452,7 @@ class Starling extends EventDispatcher
         
         initializeGraphicsAPI();
         initializeRoot();
-        
+        VAOHelper.init(mContext.__renderSession.gl);
         mTouchProcessor.simulateMultitouch = mSimulateMultitouch;
         mLastFrameTimestamp = Lib.getTimer() / 1000.0;
     }
