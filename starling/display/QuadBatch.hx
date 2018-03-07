@@ -11,7 +11,9 @@
 package starling.display;
 
 import lime.graphics.opengl.GLVertexArrayObject;
-import openfl.profiler.Profiler;
+#if profiling   
+import openfl.profiler.Profiler; 
+#end
 import flash.errors.Error;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DBufferUsage;
@@ -71,7 +73,6 @@ import starling.utils.VertexData;
 @:access(openfl.display3D.Context3D)
 @:access(openfl.display3D.VertexBuffer3D)
 @:access(openfl.display3D.IndexBuffer3D)
-@:access(openfl.display3D.Context3D)
 class QuadBatch extends DisplayObject
 {
     /** The maximum number of quads that can be displayed by one QuadBatch. */
