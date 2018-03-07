@@ -10,7 +10,10 @@
 
 package starling.display;
 
+#if profiling
 import openfl.profiler.Profiler;
+#end
+
 import flash.errors.Error;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DBufferUsage;

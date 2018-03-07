@@ -10,7 +10,9 @@
 
 package starling.core;
 
+#if profiling
 import openfl.profiler.Profiler;
+#end
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage3D;
