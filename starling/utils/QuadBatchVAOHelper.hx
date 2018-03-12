@@ -10,7 +10,9 @@ import openfl._internal.stage3D.GLUtils;
 import flash.display3D.IndexBuffer3D;
 import starling.display.QuadBatch;
 import flash.display3D.Context3D;
+#if vertex_array_object
 import openfl._internal.renderer.opengl.VertexArrayObjectUtils;
+#end
 import lime.graphics.opengl.GLVertexArrayObject;
 
 
@@ -27,18 +29,20 @@ class QuadBatchVAOHelper {
 	
 	public static inline function createVAO (context:Context3D):GLVertexArrayObject {
 		
-		return VertexArrayObjectUtils.createVAO (context.__renderSession.gl);
+		return #if vertex_array_object VertexArrayObjectUtils.createVAO (context.__renderSession.gl); #else null; #end
+		
 		
 	}
 	
 	
-	public static inline function disposeVAO (quadBatch:QuadBatch, context:Context3D):Void {
+	public static function disposeVAO (quadBatch:QuadBatch, context:Context3D):Void {
 		
-		VertexArrayObjectUtils.deleteVAO (context.__renderSession.gl, quadBatch.mVao);
+		#if vertex_array_object VertexArrayObjectUtils.deleteVAO (context.__renderSession.gl, quadBatch.mVao); #end
 		
 	}
 	
 	
+	#if vertex_array_object
 	private static inline function __drawTriangles (context:Context3D, indexBuffer:IndexBuffer3D, firstIndex:Int = 0, numTriangles:Int = -1):Void {
 		
 		if (context.__program == null) {
@@ -64,10 +68,12 @@ class QuadBatchVAOHelper {
 		#end
 		
 	}
+	#end
 	
 	
 	public static inline function renderQuadBatch (quadBatch:QuadBatch, context:Context3D):Bool {
 		
+		#if vertex_array_object
 		var gl = context.__renderSession.gl;
 		
 		if (VertexArrayObjectUtils.isVertexArrayObjectsSupported (gl)) {
@@ -87,14 +93,14 @@ class QuadBatchVAOHelper {
 			return true;
 			
 		}
-		
+		#end
 		return false;
 		
 	}
 	
 	
 	public static inline function syncVAO (quadBatch:QuadBatch, context:Context3D):Void {
-		
+		#if vertex_array_object
 		var gl = context.__renderSession.gl;
 		if (VertexArrayObjectUtils.isVertexArrayObjectsSupported (gl)) {
 			
@@ -112,6 +118,7 @@ class QuadBatchVAOHelper {
 			gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, quadBatch.mIndexBuffer.__id);
 			
 		}
+		#end
 		
 	}
 	
