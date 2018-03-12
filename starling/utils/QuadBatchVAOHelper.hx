@@ -6,6 +6,7 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 #end
 
 import openfl._internal.stage3D.opengl.GLContext3D;
+import openfl._internal.stage3D.GLUtils;
 import flash.display3D.IndexBuffer3D;
 import starling.display.QuadBatch;
 import flash.display3D.Context3D;
@@ -56,6 +57,7 @@ class QuadBatchVAOHelper {
 		var count = (numTriangles == -1) ? indexBuffer.__numIndices : (numTriangles * 3);
 		
 		gl.drawElements (gl.TRIANGLES, count, indexBuffer.__elementType, firstIndex);
+		GLUtils.CheckGLError ();
 		
 		#if gl_stats
 			GLStats.incrementDrawCall (DrawCallContext.STAGE3D);
