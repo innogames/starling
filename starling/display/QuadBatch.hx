@@ -279,8 +279,8 @@ class QuadBatch extends DisplayObject
         context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, sRenderAlpha, 1);
         context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mvpMatrix, true);
         
-        if (mVao != null) {           
-            QuadBatchVAOHelper.renderQuadBatch(this, context);        
+        var vaoRendered: Bool = QuadBatchVAOHelper.renderQuadBatch(this, context);        
+        if (vaoRendered) {           
             return;            
         }
         

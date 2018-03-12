@@ -66,7 +66,7 @@ class QuadBatchVAOHelper {
 	}
 	
 	
-	public static function renderQuadBatch (quadBatch:QuadBatch, context:Context3D):Void {
+	public static inline function renderQuadBatch (quadBatch:QuadBatch, context:Context3D):Bool {
 		
 		var gl = context.__renderSession.gl;
 		
@@ -84,7 +84,11 @@ class QuadBatchVAOHelper {
 			
 			VertexArrayObjectUtils.bindVAO (gl, null);
 			
+			return true;
+			
 		}
+		
+		return false;
 		
 	}
 	
