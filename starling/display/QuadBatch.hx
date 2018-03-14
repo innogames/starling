@@ -10,6 +10,9 @@
 
 package starling.display;
 
+import starling.utils.QuadBatchVAOHelper;
+import lime.graphics.opengl.GLVertexArrayObject;
+
 import flash.errors.Error;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DBufferUsage;
@@ -91,6 +94,7 @@ class QuadBatch extends DisplayObject
      * 'onVertexDataChanged' to upload the changes to the vertex buffers. Don't change the
      * size of this object manually; instead, use the 'capacity' property of the QuadBatch. */
     private var mVertexData:VertexData;
+    private var mVao:GLVertexArrayObject;
 
     /** Helper objects. */
     private static var sHelperMatrix:Matrix = new Matrix();
@@ -199,6 +203,7 @@ class QuadBatch extends DisplayObject
         var numVertices:Int = mVertexData.numVertices;
         var numIndices:Int = mIndexData.length;
         var context:Context3D = Starling.current.context;
+        mVao = QuadBatchVAOHelper.createVAO(context);
 
         if (numVertices == 0) return;
         if (context == null)  throw new MissingContextError();
@@ -229,6 +234,11 @@ class QuadBatch extends DisplayObject
             mIndexBuffer.dispose();
             mIndexBuffer = null;
         }
+        
+        if (mVao != null) {
+            QuadBatchVAOHelper.disposeVAO(this, Starling.current.context);
+            mVao = null;
+        }
     }
 
     /** Uploads the raw data of all batched quads to the vertex buffer. */
@@ -248,6 +258,10 @@ class QuadBatch extends DisplayObject
             mVertexBuffer.uploadFromTypedArray(mVertexData.rawData);
             #end
             mSyncRequired = false;
+        }
+        
+        if (mVao != null) {
+            QuadBatchVAOHelper.syncVAO(this, Starling.current.context);
         }
     }
     
@@ -272,6 +286,12 @@ class QuadBatch extends DisplayObject
         context.setProgram(__getProgram(tinted));
         context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, sRenderAlpha, 1);
         context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mvpMatrix, true);
+        
+        var vaoRendered: Bool = QuadBatchVAOHelper.renderQuadBatch(this, context);        
+        if (vaoRendered) {           
+            return;            
+        }
+        
         context.setVertexBufferAt(0, mVertexBuffer, VertexData.POSITION_OFFSET, 
                                   Context3DVertexBufferFormat.FLOAT_2); 
         
