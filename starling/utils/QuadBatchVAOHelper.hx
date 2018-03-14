@@ -10,9 +10,6 @@ import openfl._internal.stage3D.GLUtils;
 import flash.display3D.IndexBuffer3D;
 import starling.display.QuadBatch;
 import flash.display3D.Context3D;
-#if vertex_array_object
-import openfl._internal.renderer.opengl.VertexArrayObjectUtils;
-#end
 import lime.graphics.opengl.GLVertexArrayObject;
 
 
@@ -27,17 +24,34 @@ import lime.graphics.opengl.GLVertexArrayObject;
 class QuadBatchVAOHelper {
 	
 	
-	public static inline function createVAO (context:Context3D):GLVertexArrayObject {
+	public static function createVAO (context:Context3D):GLVertexArrayObject {
 		
-		return #if vertex_array_object VertexArrayObjectUtils.createVAO (context.__renderSession.gl); #else null; #end
+		#if vertex_array_object 
+		var vaoContext = context.__renderSession.vaoContext;
 		
+		if (vaoContext != null) {
+		
+			return vaoContext.createVertexArray ();
+			
+		}
+		#end
+		
+		return null;
 		
 	}
 	
 	
 	public static function disposeVAO (quadBatch:QuadBatch, context:Context3D):Void {
 		
-		#if vertex_array_object VertexArrayObjectUtils.deleteVAO (context.__renderSession.gl, quadBatch.mVao); #end
+		#if vertex_array_object
+		var vaoContext = context.__renderSession.vaoContext;
+		
+		if (vaoContext != null && quadBatch.mVao != null) {
+		
+			vaoContext.deleteVertexArray (quadBatch.mVao);
+			
+		}
+		#end
 		
 	}
 	
@@ -75,10 +89,11 @@ class QuadBatchVAOHelper {
 		
 		#if vertex_array_object
 		var gl = context.__renderSession.gl;
+		var vaoContext = context.__renderSession.vaoContext;
 		
-		if (VertexArrayObjectUtils.isVertexArrayObjectsSupported (gl)) {
+		if (vaoContext != null) {
 			
-			if (!quadBatch.mSyncRequired) VertexArrayObjectUtils.bindVAO (gl, quadBatch.mVao);
+			if (!quadBatch.mSyncRequired) vaoContext.bindVertexArray (quadBatch.mVao);
 			 
 			if (quadBatch.mTexture != null) {
 				
@@ -88,23 +103,27 @@ class QuadBatchVAOHelper {
 			
 			__drawTriangles (context, quadBatch.mIndexBuffer, 0, quadBatch.mNumQuads * 2);
 			
-			VertexArrayObjectUtils.bindVAO (gl, null);
+			vaoContext.bindVertexArray (null);
 			
 			return true;
 			
 		}
 		#end
+		
 		return false;
 		
 	}
 	
 	
 	public static inline function syncVAO (quadBatch:QuadBatch, context:Context3D):Void {
+		
 		#if vertex_array_object
 		var gl = context.__renderSession.gl;
-		if (VertexArrayObjectUtils.isVertexArrayObjectsSupported (gl)) {
+		var vaoContext = context.__renderSession.vaoContext;
+		
+		if (vaoContext != null) {
 			
-			VertexArrayObjectUtils.bindVAO (gl, quadBatch.mVao);
+			vaoContext.bindVertexArray (quadBatch.mVao);
 			
 			gl.enableVertexAttribArray (0);
 			gl.enableVertexAttribArray (1);
