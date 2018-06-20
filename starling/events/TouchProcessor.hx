@@ -73,7 +73,7 @@ class TouchProcessor
     
     /** Helper objects. */
     private static var sUpdatedTouches:Vector<Touch> = new Vector<Touch>();
-    private static var sHoveringTouchData:Vector<Dynamic> = new Vector<Dynamic>();
+    private static var sHoveringTouchData:Vector<TouchData> = new Vector<TouchData>();
     private static var sHelperPoint:Point = new Point();
     
     /** Creates a new TouchProcessor that will dispatch events to the given stage. */
@@ -473,3 +473,5 @@ class TouchProcessor
         cancelTouches();
     }
 }
+
+typedef TouchData = {touch: Touch, target: DisplayObject, bubbleChain: Vector<EventDispatcher>};

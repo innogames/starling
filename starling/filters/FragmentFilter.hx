@@ -10,6 +10,7 @@
 
 package starling.filters;
 
+import flash.geom.Point;
 import flash.errors.ArgumentError;
 import flash.errors.Error;
 import flash.display3D.Context3D;
@@ -113,6 +114,7 @@ class FragmentFilter
     
     /** Helper objects. */
     private static var sStageBounds:Rectangle = new Rectangle();
+    private static var sCachePoint:Point = new Point();
     private static var sTransformationMatrix:Matrix = new Matrix();
     
     /** Helper objects that may be used recursively (thus not static). */
@@ -358,6 +360,21 @@ class FragmentFilter
     
     private function updateBuffers(context:Context3D, bounds:Rectangle):Void
     {
+	    var needsUpdate:Bool = mVertexBuffer == null;
+        mVertexData.getPosition(0, sCachePoint);
+	    if (sCachePoint.x != bounds.x || sCachePoint.y != bounds.y) {
+		    needsUpdate = true;
+	    } else {
+		     mVertexData.getPosition(3, sCachePoint);
+		     if (sCachePoint.x != bounds.right  || sCachePoint.y != bounds.bottom) {
+		         needsUpdate = true;
+	        }
+	    }
+	    
+	    if (!needsUpdate) {
+		    return;
+	    }
+	    
         mVertexData.setPosition(0, bounds.x, bounds.y);
         mVertexData.setPosition(1, bounds.right, bounds.y);
         mVertexData.setPosition(2, bounds.x, bounds.bottom);

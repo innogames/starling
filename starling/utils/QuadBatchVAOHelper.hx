@@ -7,6 +7,7 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 
 import openfl._internal.stage3D.opengl.GLContext3D;
 import openfl._internal.stage3D.GLUtils;
+import openfl.display.OpenGLRenderer;
 import flash.display3D.IndexBuffer3D;
 import starling.display.QuadBatch;
 import flash.display3D.Context3D;
@@ -16,6 +17,7 @@ import lime.graphics.opengl.GLVertexArrayObject;
 @:access(openfl.display3D.Context3D)
 @:access(openfl.display3D.IndexBuffer3D)
 @:access(openfl.display3D.VertexBuffer3D)
+@:access(openfl.display.OpenGLRenderer)
 @:access(starling.display.QuadBatch)
 @:access(openfl._internal.stage3D.opengl.GLContext3D)
 @:access(openfl.display3D.Program3D)
@@ -27,7 +29,8 @@ class QuadBatchVAOHelper {
 	public static function createVAO (context:Context3D):GLVertexArrayObject {
 		
 		#if vertex_array_object 
-		var vaoContext = context.__renderSession.vaoContext;
+		var renderer:OpenGLRenderer = cast context.__renderer;
+		var vaoContext = renderer.__vaoContext;
 		
 		if (vaoContext != null) {
 		
@@ -44,7 +47,8 @@ class QuadBatchVAOHelper {
 	public static function disposeVAO (quadBatch:QuadBatch, context:Context3D):Void {
 		
 		#if vertex_array_object
-		var vaoContext = context.__renderSession.vaoContext;
+		var renderer:OpenGLRenderer = cast context.__renderer;
+		var vaoContext = renderer.__vaoContext;
 		
 		if (vaoContext != null && quadBatch.mVao != null) {
 		
@@ -65,7 +69,9 @@ class QuadBatchVAOHelper {
 			
 		}
 		
-		var gl = context.__renderSession.gl;
+		var renderer:OpenGLRenderer = cast context.__renderer;
+		
+		var gl = renderer.gl;
 		GLContext3D.context = context;
 		GLContext3D.gl = gl;
 		
@@ -88,8 +94,9 @@ class QuadBatchVAOHelper {
 	public static inline function renderQuadBatch (quadBatch:QuadBatch, context:Context3D):Bool {
 		
 		#if vertex_array_object
-		var gl = context.__renderSession.gl;
-		var vaoContext = context.__renderSession.vaoContext;
+		var renderer:OpenGLRenderer = cast context.__renderer;
+		var gl = renderer.gl;
+		var vaoContext = renderer.__vaoContext;
 		
 		if (vaoContext != null) {
 			
@@ -118,8 +125,9 @@ class QuadBatchVAOHelper {
 	public static inline function syncVAO (quadBatch:QuadBatch, context:Context3D):Void {
 		
 		#if vertex_array_object
-		var gl = context.__renderSession.gl;
-		var vaoContext = context.__renderSession.vaoContext;
+		var renderer:OpenGLRenderer = cast context.__renderer;
+		var gl = renderer.gl;
+		var vaoContext = renderer.__vaoContext;
 		
 		if (vaoContext != null) {
 			
