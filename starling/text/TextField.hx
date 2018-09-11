@@ -31,8 +31,6 @@ import flash.text.TextFormatAlign;
 
 import haxe.Constraints.Function;
 
-import openfl.Assets;
-
 import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.display.DisplayObject;
