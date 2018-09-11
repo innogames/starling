@@ -256,7 +256,7 @@ class FragmentFilter
                                          mResolution * scale);
 
         // draw the original object into a texture
-        support.renderTarget = mPassTextures[0];
+        support.setRenderTarget(mPassTextures[0], true);
         support.clear();
         support.blendMode = BlendMode.NORMAL;
         support.stencilReferenceValue = 0;
@@ -296,10 +296,10 @@ class FragmentFilter
                 else
                 {
                     // draw into back buffer, at original (stage) coordinates
-                    support.popClipRect();
                     support.projectionMatrix   = projMatrix;
                     support.projectionMatrix3D = projMatrix3D;
                     support.renderTarget = previousRenderTarget;
+                    support.popClipRect();
                     support.translateMatrix(mOffsetX, mOffsetY);
                     support.stencilReferenceValue = previousStencilRefValue;
                     support.blendMode = object.blendMode;

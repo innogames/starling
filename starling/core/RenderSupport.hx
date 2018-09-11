@@ -377,19 +377,24 @@ class RenderSupport
 
     /** Changes the the current render target.
      * @param target       Either a texture or 'null' to render into the back buffer.
+     * @param enableDepthAndStencil  Indicates if depth and stencil testing will be available.
+     *                     This parameter affects only texture targets.
      * @param antiAliasing Only supported for textures, beginning with AIR 13, and only on
      *                     Desktop. Values range from 0 (no antialiasing) to 4 (best quality).
      */
-    public function setRenderTarget(target:Texture, antiAliasing:Int=0):Void
+    public function setRenderTarget(target:Texture, enableDepthAndStencil:Bool=false,
+                                    antiAliasing:Int=0):Void
     {
         Starling.current.contextData[RENDER_TARGET_NAME] = target;
         applyClipRect();
 
-        if (target != null)
+        if (target != null) {
+            enableDepthAndStencil = enableDepthAndStencil && SystemUtil.supportsDepthAndStencil;
             Starling.current.context.setRenderToTexture(target.base,
-                    SystemUtil.supportsDepthAndStencil, antiAliasing);
-        else
+                    enableDepthAndStencil, antiAliasing);
+        } else {
             Starling.current.context.setRenderToBackBuffer();
+        }
     }
     
     // clipping

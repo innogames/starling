@@ -241,8 +241,8 @@ class RenderTexture extends SubTexture
         // limit drawing to relevant area
         sClipRect.setTo(0, 0, mActiveTexture.width, mActiveTexture.height);
 
-        mSupport.pushClipRect(sClipRect);
-        mSupport.setRenderTarget(mActiveTexture, antiAliasing);
+        mSupport.pushClipRect(sClipRect, false);
+        mSupport.setRenderTarget(mActiveTexture, true, antiAliasing);
         
         if (isDoubleBuffered || !isPersistent || !mBufferReady)
             mSupport.clear();
