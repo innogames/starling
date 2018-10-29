@@ -112,6 +112,7 @@ class Sprite extends DisplayObjectContainer
      */
     public function flatten(ignoreChildOrder:Bool=false):Void
     {
+        return;
         mFlattenRequested = true;
         mFlattenOptimized = ignoreChildOrder;
         broadcastEventWith(Event.FLATTEN);

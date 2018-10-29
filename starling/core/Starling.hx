@@ -10,6 +10,7 @@
 
 package starling.core;
 
+import lime.utils.Float32Array;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage3D;
@@ -545,8 +546,16 @@ class Starling extends EventDispatcher
         if (!mShareContext)
             RenderSupport._clear(mStage.color, 1.0);
         
+        var matrix = new Float32Array(16);
+        for (i in 0...16) {
+            matrix[i] = mSupport.projectionMatrix3D.rawData[i];
+        }
+        mSupport.batcher.projectionMatrix = matrix;
+        
         mStage.render(mSupport, 1.0);
         mSupport.finishQuadBatch();
+
+        mSupport.batcher.flush();
         
         if (mStatsDisplay != null)
             mStatsDisplay.drawCount = mSupport.drawCount;

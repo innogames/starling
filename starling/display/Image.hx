@@ -16,10 +16,15 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import openfl._internal.renderer.opengl.batcher.Quad as BatcherQuad;
+import openfl._internal.renderer.opengl.batcher.QuadTextureData as BatcherQuadTextureData;
+import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
+
 import starling.core.RenderSupport;
 import starling.textures.Texture;
 import starling.textures.TextureSmoothing;
 import starling.utils.VertexData;
+import starling.core.Starling;
 
 /** An Image is a quad with a texture mapped onto it.
  *  
@@ -44,6 +49,9 @@ class Image extends Quad
     
     private var mVertexDataCache:VertexData;
     private var mVertexDataCacheInvalid:Bool;
+    
+    // TODO: this should really be part of the texture, but let's make it step by step
+    private var mBatcherQuadTextureData:BatcherQuadTextureData;
     
     /** Creates a quad with a texture mapped onto it. */
     public function new(texture:Texture)
@@ -102,20 +110,6 @@ class Image extends Quad
         onVertexDataChanged();
     }
     
-    /** Sets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. */
-    public function setTexCoords(vertexID:Int, coords:Point):Void
-    {
-        mVertexData.setTexCoords(vertexID, coords.x, coords.y);
-        onVertexDataChanged();
-    }
-    
-    /** Sets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. */
-    public function setTexCoordsTo(vertexID:Int, u:Float, v:Float):Void
-    {
-        mVertexData.setTexCoords(vertexID, u, v);
-        onVertexDataChanged();
-    }
-    
     /** Gets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. 
      * If you pass a 'resultPoint', the result will be stored in this point instead of 
      * creating a new object.*/
@@ -145,6 +139,29 @@ class Image extends Quad
             mVertexDataCacheInvalid = false;
             mVertexData.copyTo(mVertexDataCache);
             mTexture.adjustVertexData(mVertexDataCache, 0, 4);
+            
+            var point = tempPoint;
+            var data = mVertexDataCache;
+           
+            data.getTexCoords(0, point);
+            var u0 = point.x, v0 = point.y;
+            
+            data.getTexCoords(1, point);
+            var u1 = point.x, v1 = point.y;
+            
+            data.getTexCoords(3, point);
+            var u2 = point.x, v2 = point.y;
+            
+            data.getTexCoords(2, point);
+            var u3 = point.x, v3 = point.y;
+
+            var tex = @:privateAccess mTexture.base.__getTexture();
+            mBatcherQuadTextureData = BatcherQuadTextureData.createRegion(tex,
+                u0, v0,
+                u1, v1,
+                u2, v2,
+                u3, v3
+            );
         }
         
         mVertexDataCache.copyTransformedTo(targetData, targetVertexID, matrix, 0, 4);
@@ -183,9 +200,66 @@ class Image extends Quad
         return value;
     }
     
+    var batcherQuad = new BatcherQuad();
+    static var tempVertexData = new VertexData(4);
+    static var tempPoint = new Point();
+    
     /** @inheritDoc */
     public override function render(support:RenderSupport, parentAlpha:Float):Void
     {
-        support.batchQuad(this, parentAlpha, mTexture, mSmoothing);
+        var quad = batcherQuad;
+        var data = tempVertexData;
+        var point = tempPoint;
+
+        copyVertexDataTransformedTo(data, 0, support.modelViewMatrix);
+        
+        var vertexData = quad.vertexData;
+
+        data.getPosition(0, point);
+        vertexData[0] = point.x;
+        vertexData[1] = point.y;
+        
+        data.getPosition(1, point);
+        vertexData[2] = point.x;
+        vertexData[3] = point.y;
+        
+        data.getPosition(3, point);
+        vertexData[4] = point.x;
+        vertexData[5] = point.y;
+        
+        data.getPosition(2, point);
+        vertexData[6] = point.x;
+        vertexData[7] = point.y;
+
+        quad.blendMode = toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha);
+        quad.smoothing = mSmoothing != TextureSmoothing.NONE;
+        quad.texture = mBatcherQuadTextureData;
+        quad.alpha = parentAlpha * mAlpha;
+        
+        support.batcher.render(quad);
+        // support.batchQuad(this, parentAlpha, mTexture, mSmoothing);
+    }
+
+    static function toBatcherBlendMode(blendMode:String, premultipliedAlpha:Bool):BatcherBlendMode {
+        return switch [premultipliedAlpha, blendMode] {
+            case [true, BlendMode.NONE]: BatcherBlendMode.NONE;
+            case [true, BlendMode.NORMAL]: BatcherBlendMode.NORMAL;
+            case [true, BlendMode.ADD]: BatcherBlendMode.ADD;
+            case [true, BlendMode.MULTIPLY]: BatcherBlendMode.MULTIPLY;
+            case [true, BlendMode.SCREEN]: BatcherBlendMode.SCREEN;
+            case [true, BlendMode.ERASE]: BatcherBlendMode.ERASE;
+            case [true, BlendMode.MASK]: BatcherBlendMode.MASK;
+            case [true, BlendMode.BELOW]: BatcherBlendMode.BELOW;
+            case [true, _]: BatcherBlendMode.NORMAL;
+            case [false, BlendMode.NONE]: BatcherBlendMode.NOPREMULT_NONE;
+            case [false, BlendMode.NORMAL]: BatcherBlendMode.NOPREMULT_NORMAL;
+            case [false, BlendMode.ADD]: BatcherBlendMode.NOPREMULT_ADD;
+            case [false, BlendMode.MULTIPLY]: BatcherBlendMode.NOPREMULT_MULTIPLY;
+            case [false, BlendMode.SCREEN]: BatcherBlendMode.NOPREMULT_SCREEN;
+            case [false, BlendMode.ERASE]: BatcherBlendMode.NOPREMULT_ERASE;
+            case [false, BlendMode.MASK]: BatcherBlendMode.NOPREMULT_MASK;
+            case [false, BlendMode.BELOW]: BatcherBlendMode.NOPREMULT_BELOW;
+            case [false, _]: BatcherBlendMode.NOPREMULT_NORMAL;
+        }
     }
 }

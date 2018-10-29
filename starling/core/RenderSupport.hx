@@ -24,6 +24,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
 
+import openfl._internal.renderer.opengl.batcher.BatchRenderer;
 import openfl.utils.AGALMiniAssembler;
 import openfl.Vector;
 
@@ -604,6 +605,10 @@ class RenderSupport
     /** Renders the current quad batch and resets it. */
     public function finishQuadBatch():Void
     {
+        if (Starling.current.context != null) {
+            batcher.flush();
+        }
+        
         var currentBatch:QuadBatch = mQuadBatches[mCurrentQuadBatchID];
         
         if (currentBatch.numQuads != 0)
@@ -748,4 +753,7 @@ class RenderSupport
     /** Indicates the number of stage3D draw calls. */
     public var drawCount(get, never):Int;
     private function get_drawCount():Int { return mDrawCount; }
+    
+    public var batcher(get, never):BatchRenderer;
+    inline function get_batcher() return @:privateAccess Starling.current.context.__renderSession.batcher;
 }
