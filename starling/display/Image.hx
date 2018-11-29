@@ -230,7 +230,6 @@ class Image extends Quad
     {
         prepareQuad(support, parentAlpha);        
         support.batcher.render(mBatcherQuad);
-        // support.batchQuad(this, parentAlpha, mTexture, mSmoothing);
     }
     
      private function prepareQuad(support:RenderSupport, parentAlpha:Float): Void {
