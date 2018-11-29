@@ -231,7 +231,7 @@ class FragmentFilter
         if (bounds.isEmpty())
         {
             disposePassTextures();
-            return intoCache ? null : null; 
+            return null; 
         }
         
         updateBuffers(context, boundsPot);
@@ -547,6 +547,9 @@ class FragmentFilter
     /** @private */
     @:allow(starling) private function compile(object:DisplayObject):QuadBatch
     {
+        // flattening not supported
+        return new QuadBatch();
+        
         var support:RenderSupport;
         var stage:Stage = object.stage;
         var quadBatch:QuadBatch = new QuadBatch();
