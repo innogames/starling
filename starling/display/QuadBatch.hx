@@ -316,6 +316,7 @@ class QuadBatch extends DisplayObject
         
         context.setVertexBufferAt(1, null);
         context.setVertexBufferAt(0, null);
+        Starling.current.removeCurrentProgram();
     }
     
     /** Resets the batch. The vertex- and index-buffers remain their size, so that they

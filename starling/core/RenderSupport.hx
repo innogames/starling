@@ -24,6 +24,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
 
+import lime.utils.Float32Array;
 import openfl._internal.renderer.opengl.batcher.BatchRenderer;
 import openfl.utils.AGALMiniAssembler;
 import openfl.Vector;
@@ -77,6 +78,7 @@ class RenderSupport
     private var mCurrentQuadBatchID:Int;
 
     /** helper objects */
+    private static var sBatcherProjectionMatrix = new Float32Array(16);
     private static var sPoint:Point = new Point();
     private static var sPoint3D:Vector3D = new Vector3D();
     private static var sClipRect:Rectangle = new Rectangle();
@@ -386,11 +388,15 @@ class RenderSupport
         Starling.current.contextData[RENDER_TARGET_NAME] = target;
         applyClipRect();
 
-        if (target != null)
+        if (target != null) {     
+            batcher.flipVertical();
             Starling.current.context.setRenderToTexture(target.base,
                     SystemUtil.supportsDepthAndStencil, antiAliasing);
-        else
+            
+        } else {
+            batcher.unflipVertical();
             Starling.current.context.setRenderToBackBuffer();
+        }
     }
     
     // clipping
@@ -756,4 +762,11 @@ class RenderSupport
     
     public var batcher(get, never):BatchRenderer;
     inline function get_batcher() return @:privateAccess Starling.current.context.__renderSession.batcher;
+    
+    public function updateBatchersProjectionMatrix(): Void {
+        for (i in 0...16) {
+                sBatcherProjectionMatrix[i] = projectionMatrix3D.rawData[i];
+        }
+        batcher.projectionMatrix = sBatcherProjectionMatrix;
+    }
 }

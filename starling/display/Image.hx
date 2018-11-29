@@ -10,6 +10,7 @@
 
 package starling.display;
 
+import flash.geom.ColorTransform;
 import flash.display.Bitmap;
 import flash.errors.ArgumentError;
 import flash.geom.Matrix;
@@ -18,12 +19,12 @@ import flash.geom.Rectangle;
 
 import openfl._internal.renderer.opengl.batcher.Quad as BatcherQuad;
 import openfl._internal.renderer.opengl.batcher.QuadTextureData as BatcherQuadTextureData;
-import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
 
 import starling.core.RenderSupport;
 import starling.textures.Texture;
 import starling.textures.TextureSmoothing;
 import starling.utils.VertexData;
+import starling.utils.BlendModeUtils;
 import starling.core.Starling;
 
 /** An Image is a quad with a texture mapped onto it.
@@ -46,12 +47,17 @@ class Image extends Quad
 {
     private var mTexture:Texture;
     private var mSmoothing:String;
+    private var mBatcherQuad:BatcherQuad;
     
     private var mVertexDataCache:VertexData;
     private var mVertexDataCacheInvalid:Bool;
     
     // TODO: this should really be part of the texture, but let's make it step by step
     private var mBatcherQuadTextureData:BatcherQuadTextureData;
+    
+    /** Helper objects. */
+    private static var sHelperVertexData:VertexData = new VertexData(4);
+    private static var sHelperPoint:Point = new Point();
     
     /** Creates a quad with a texture mapped onto it. */
     public function new(texture:Texture)
@@ -64,6 +70,8 @@ class Image extends Quad
             var pma:Bool = texture.premultipliedAlpha;
             
             super(width, height, 0xffffff, pma);
+            
+            mBatcherQuad = new BatcherQuad();
             
             mVertexData.setTexCoords(0, 0.0, 0.0);
             mVertexData.setTexCoords(1, 1.0, 0.0);
@@ -92,6 +100,23 @@ class Image extends Quad
     private override function onVertexDataChanged():Void
     {
         mVertexDataCacheInvalid = true;
+    }
+    
+    /** @inheritDoc */
+    private override function set_color(value:UInt):UInt 
+    {
+        super.set_color(value);
+        
+        var colorTransform = mBatcherQuad.colorTransform;
+        if (colorTransform == null) {
+            colorTransform = mBatcherQuad.colorTransform = new ColorTransform();
+        }
+        var multiplier:Float = mVertexData.premultipliedAlpha ? alpha : 1.0;
+        colorTransform.redMultiplier = ((value >> 16) & 0xff) / 255.0 * multiplier;
+        colorTransform.blueMultiplier = ((value >>  8) & 0xff) / 255.0 * multiplier;
+        colorTransform.greenMultiplier = (value & 0xff) / 255.0 * multiplier;
+       
+        return value;
     }
     
     /** Readjusts the dimensions of the image according to its current texture. Call this method 
@@ -140,7 +165,7 @@ class Image extends Quad
             mVertexData.copyTo(mVertexDataCache);
             mTexture.adjustVertexData(mVertexDataCache, 0, 4);
             
-            var point = tempPoint;
+            var point = sHelperPoint;
             var data = mVertexDataCache;
            
             data.getTexCoords(0, point);
@@ -200,20 +225,22 @@ class Image extends Quad
         return value;
     }
     
-    var batcherQuad = new BatcherQuad();
-    static var tempVertexData = new VertexData(4);
-    static var tempPoint = new Point();
-    
     /** @inheritDoc */
     public override function render(support:RenderSupport, parentAlpha:Float):Void
     {
-        var quad = batcherQuad;
-        var data = tempVertexData;
-        var point = tempPoint;
+        prepareQuad(support, parentAlpha);        
+        support.batcher.render(mBatcherQuad);
+        // support.batchQuad(this, parentAlpha, mTexture, mSmoothing);
+    }
+    
+     private function prepareQuad(support:RenderSupport, parentAlpha:Float): Void {
+        var quad = mBatcherQuad;
+        var data = sHelperVertexData;
+        var point = sHelperPoint;
 
         copyVertexDataTransformedTo(data, 0, support.modelViewMatrix);
         
-        var vertexData = quad.vertexData;
+        var vertexData = quad.vertexData;        
 
         data.getPosition(0, point);
         vertexData[0] = point.x;
@@ -230,36 +257,15 @@ class Image extends Quad
         data.getPosition(2, point);
         vertexData[6] = point.x;
         vertexData[7] = point.y;
-
-        quad.blendMode = toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha);
+        
+        quad.blendMode = BlendModeUtils.toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha);
         quad.smoothing = mSmoothing != TextureSmoothing.NONE;
         quad.texture = mBatcherQuadTextureData;
         quad.alpha = parentAlpha * mAlpha;
-        
-        support.batcher.render(quad);
-        // support.batchQuad(this, parentAlpha, mTexture, mSmoothing);
     }
-
-    static function toBatcherBlendMode(blendMode:String, premultipliedAlpha:Bool):BatcherBlendMode {
-        return switch [premultipliedAlpha, blendMode] {
-            case [true, BlendMode.NONE]: BatcherBlendMode.NONE;
-            case [true, BlendMode.NORMAL]: BatcherBlendMode.NORMAL;
-            case [true, BlendMode.ADD]: BatcherBlendMode.ADD;
-            case [true, BlendMode.MULTIPLY]: BatcherBlendMode.MULTIPLY;
-            case [true, BlendMode.SCREEN]: BatcherBlendMode.SCREEN;
-            case [true, BlendMode.ERASE]: BatcherBlendMode.ERASE;
-            case [true, BlendMode.MASK]: BatcherBlendMode.MASK;
-            case [true, BlendMode.BELOW]: BatcherBlendMode.BELOW;
-            case [true, _]: BatcherBlendMode.NORMAL;
-            case [false, BlendMode.NONE]: BatcherBlendMode.NOPREMULT_NONE;
-            case [false, BlendMode.NORMAL]: BatcherBlendMode.NOPREMULT_NORMAL;
-            case [false, BlendMode.ADD]: BatcherBlendMode.NOPREMULT_ADD;
-            case [false, BlendMode.MULTIPLY]: BatcherBlendMode.NOPREMULT_MULTIPLY;
-            case [false, BlendMode.SCREEN]: BatcherBlendMode.NOPREMULT_SCREEN;
-            case [false, BlendMode.ERASE]: BatcherBlendMode.NOPREMULT_ERASE;
-            case [false, BlendMode.MASK]: BatcherBlendMode.NOPREMULT_MASK;
-            case [false, BlendMode.BELOW]: BatcherBlendMode.NOPREMULT_BELOW;
-            case [false, _]: BatcherBlendMode.NOPREMULT_NORMAL;
-        }
+    
+    public function transfromVertices(matrix: Matrix): Void {
+        mVertexData.copyTransformedTo(mVertexData, 0, matrix);
+        mVertexDataCacheInvalid = true;
     }
 }

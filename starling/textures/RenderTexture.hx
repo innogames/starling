@@ -139,7 +139,7 @@ class RenderTexture extends SubTexture
         mIsPersistent = persistent;
         mSupport = new RenderSupport();
         mSupport.setProjectionMatrix(0, 0, rootWidth, rootHeight, width, height);
-        
+        mSupport.updateBatchersProjectionMatrix();
         if (persistent && (!optimizePersistentBuffers || !SystemUtil.supportsRelaxedTargetClearRequirement))
         {
             mBufferTexture = Texture.empty(legalWidth, legalHeight, PMA, false, true, scale, format, repeat);

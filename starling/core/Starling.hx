@@ -546,17 +546,11 @@ class Starling extends EventDispatcher
         if (!mShareContext)
             RenderSupport._clear(mStage.color, 1.0);
         
-        var matrix = new Float32Array(16);
-        for (i in 0...16) {
-            matrix[i] = mSupport.projectionMatrix3D.rawData[i];
-        }
-        mSupport.batcher.projectionMatrix = matrix;
+        mSupport.updateBatchersProjectionMatrix();
         
         mStage.render(mSupport, 1.0);
         mSupport.finishQuadBatch();
-
-        mSupport.batcher.flush();
-        
+                
         if (mStatsDisplay != null)
             mStatsDisplay.drawCount = mSupport.drawCount;
         
@@ -901,6 +895,14 @@ class Starling extends EventDispatcher
         {                
             program.dispose();
             programs.remove(name);
+        }
+    }
+            
+    public function removeCurrentProgram():Void {
+        // Context's __program needs to be cleared as BatchRenderer uses different program. If not cleared, Starling will
+        // try to set its program's parameters to BatchRenderer's program which results with WebGL warnings
+        if (mContext != null) {
+            @:privateAccess mContext.__program = null;
         }
     }
     

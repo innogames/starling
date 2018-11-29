@@ -162,6 +162,7 @@ class Canvas extends DisplayObject
 
         context.setVertexBufferAt(0, null);
         context.setVertexBufferAt(1, null);
+        Starling.current.removeCurrentProgram();        
     }
 
     /** @inheritDoc */

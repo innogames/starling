@@ -10,6 +10,7 @@
 
 package starling.filters;
 
+import flash.geom.Point;
 import flash.errors.ArgumentError;
 import flash.errors.Error;
 import flash.display3D.Context3D;
@@ -109,9 +110,10 @@ class FragmentFilter
     private var mIndexBuffer:IndexBuffer3D;
     
     private var mCacheRequested:Bool;
-    private var mCache:QuadBatch;
+    private var mCache:Image;
     
     /** Helper objects. */
+    private static var sHelperPoint:Point = new Point();
     private static var sStageBounds:Rectangle = new Rectangle();
     private static var sTransformationMatrix:Matrix = new Matrix();
     
@@ -203,7 +205,7 @@ class FragmentFilter
     }
     
     private function renderPasses(object:DisplayObject, support:RenderSupport,
-                                  parentAlpha:Float, intoCache:Bool=false):QuadBatch
+                                  parentAlpha:Float, intoCache:Bool=false):Image
     {
         var passTexture:Texture;
         var cacheTexture:Texture = null;
@@ -229,7 +231,7 @@ class FragmentFilter
         if (bounds.isEmpty())
         {
             disposePassTextures();
-            return intoCache ? new QuadBatch() : null; 
+            return intoCache ? null : null; 
         }
         
         updateBuffers(context, boundsPot);
@@ -263,7 +265,7 @@ class FragmentFilter
         support.setProjectionMatrix(
             bounds.x, bounds.y, boundsPot.width, boundsPot.height,
             stage.stageWidth, stage.stageHeight, stage.cameraPosition);
-
+        support.updateBatchersProjectionMatrix();
         object.render(support, parentAlpha);
         support.finishQuadBatch();
         
@@ -321,10 +323,12 @@ class FragmentFilter
         context.setVertexBufferAt(mVertexPosAtID, null);
         context.setVertexBufferAt(mTexCoordsAtID, null);
         context.setTextureAt(mBaseTextureID, null);
+        Starling.current.removeCurrentProgram(); 
 
         support.popMatrix();
         support.popMatrix3D();
-
+        
+        var image: Image = null;
         if (intoCache)
         {
             // restore support settings
@@ -334,24 +338,20 @@ class FragmentFilter
             support.popClipRect();
             
             // Create an image containing the cache. To have a display object that contains
-            // the filter output in object coordinates, we wrap it in a QuadBatch: that way,
-            // we can modify it with a transformation matrix.
+            // the filter output in object coordinates. That way we can modify it with a transformation matrix.
             
-            var quadBatch:QuadBatch = new QuadBatch();
-            var image:Image = new Image(cacheTexture);
+            image = new Image(cacheTexture);
             
             // targetSpace could be null, so we calculate the matrix from the other side
             // and invert.
 
             object.getTransformationMatrix(targetSpace, sTransformationMatrix).invert();
-            MatrixUtil.prependTranslation(sTransformationMatrix,
-                bounds.x + mOffsetX, bounds.y + mOffsetY);
-            quadBatch.addImage(image, 1.0, sTransformationMatrix);
-            quadBatch.ownsTexture = true;
-
-            return quadBatch;
+            MatrixUtil.prependTranslation(sTransformationMatrix, bounds.x + mOffsetX, bounds.y + mOffsetY);
+            image.transfromVertices(sTransformationMatrix);  
         }
-        else return null;
+        
+        support.updateBatchersProjectionMatrix();
+        return image;
     }
     
     // helper methods
@@ -549,11 +549,14 @@ class FragmentFilter
     {
         var support:RenderSupport;
         var stage:Stage = object.stage;
-        var quadBatch:QuadBatch;
+        var quadBatch:QuadBatch = new QuadBatch();
 
         support = new RenderSupport();
-        object.getTransformationMatrix(stage, support.modelViewMatrix);
-        quadBatch = renderPasses(object, support, 1.0, true);
+        object.getTransformationMatrix(stage, support.modelViewMatrix);        
+        var image: Image = renderPasses(object, support, 1.0, true);
+        if (image != null) {
+            quadBatch.addImage(image);
+        }
         support.dispose();
 
         return quadBatch;
