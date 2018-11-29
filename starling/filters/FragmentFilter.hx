@@ -542,29 +542,6 @@ class FragmentFilter
         disposeCache();
     }
     
-    // flattening
-    
-    /** @private */
-    @:allow(starling) private function compile(object:DisplayObject):QuadBatch
-    {
-        // flattening not supported
-        return new QuadBatch();
-        
-        var support:RenderSupport;
-        var stage:Stage = object.stage;
-        var quadBatch:QuadBatch = new QuadBatch();
-
-        support = new RenderSupport();
-        object.getTransformationMatrix(stage, support.modelViewMatrix);        
-        var image: Image = renderPasses(object, support, 1.0, true);
-        if (image != null) {
-            quadBatch.addImage(image);
-        }
-        support.dispose();
-
-        return quadBatch;
-    }
-    
     // properties
     
     /** Indicates if the filter is cached (via the "cache" method). */
