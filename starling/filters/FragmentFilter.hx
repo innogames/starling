@@ -265,7 +265,6 @@ class FragmentFilter
         support.setProjectionMatrix(
             bounds.x, bounds.y, boundsPot.width, boundsPot.height,
             stage.stageWidth, stage.stageHeight, stage.cameraPosition);
-        support.updateBatchersProjectionMatrix();
         object.render(support, parentAlpha);
         support.finishQuadBatch();
         
@@ -328,19 +327,18 @@ class FragmentFilter
         support.popMatrix();
         support.popMatrix3D();
         
-        var image: Image = null;
         if (intoCache)
         {
             // restore support settings
             support.projectionMatrix.copyFrom(projMatrix);
-            support.projectionMatrix3D.copyFrom(projMatrix3D);
+            support.projectionMatrix3D = projMatrix3D;
             support.renderTarget = previousRenderTarget;
             support.popClipRect();
             
             // Create an image containing the cache. To have a display object that contains
             // the filter output in object coordinates. That way we can modify it with a transformation matrix.
             
-            image = new Image(cacheTexture);
+            var image: Image = new Image(cacheTexture);
             
             // targetSpace could be null, so we calculate the matrix from the other side
             // and invert.
@@ -348,10 +346,9 @@ class FragmentFilter
             object.getTransformationMatrix(targetSpace, sTransformationMatrix).invert();
             MatrixUtil.prependTranslation(sTransformationMatrix, bounds.x + mOffsetX, bounds.y + mOffsetY);
             image.transfromVertices(sTransformationMatrix);  
-        }
-        
-        support.updateBatchersProjectionMatrix();
-        return image;
+            
+            return image;
+        } else return null;        
     }
     
     // helper methods

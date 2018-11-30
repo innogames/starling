@@ -545,9 +545,7 @@ class Starling extends EventDispatcher
         
         if (!mShareContext)
             RenderSupport._clear(mStage.color, 1.0);
-        
-        mSupport.updateBatchersProjectionMatrix();
-        
+                
         mStage.render(mSupport, 1.0);
         mSupport.finishQuadBatch();
                 

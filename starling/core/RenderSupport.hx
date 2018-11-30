@@ -183,6 +183,8 @@ class RenderSupport
             focalLength);
 
         applyClipRect();
+        
+        updateBatchersProjectionMatrix();
     }
 
     /** Sets up the projection matrix for ortographic 2D rendering. */
@@ -341,6 +343,7 @@ class RenderSupport
     private function set_projectionMatrix3D(value:Matrix3D):Matrix3D
     {
         mProjectionMatrix3D.copyFrom(value);
+        updateBatchersProjectionMatrix();
         return value;
     }
 
@@ -763,7 +766,11 @@ class RenderSupport
     public var batcher(get, never):BatchRenderer;
     inline function get_batcher() return @:privateAccess Starling.current.context.__renderSession.batcher;
     
-    public function updateBatchersProjectionMatrix(): Void {
+    private function updateBatchersProjectionMatrix(): Void {
+        if (Starling.current.context == null) {
+            return;
+        }
+        
         for (i in 0...16) {
                 sBatcherProjectionMatrix[i] = projectionMatrix3D.rawData[i];
         }
