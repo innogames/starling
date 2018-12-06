@@ -540,7 +540,7 @@ class QuadBatch extends DisplayObject
             }
         }
     }
-   
+    
     // properties
     
     /** Returns the number of quads that have been added to the batch. */

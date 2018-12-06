@@ -115,7 +115,7 @@ class Image extends Quad
         colorTransform.redMultiplier = ((value >> 16) & 0xff) / 255.0 * multiplier;
         colorTransform.blueMultiplier = ((value >>  8) & 0xff) / 255.0 * multiplier;
         colorTransform.greenMultiplier = (value & 0xff) / 255.0 * multiplier;
-       
+        
         return value;
     }
     
@@ -167,7 +167,7 @@ class Image extends Quad
             
             var point = sHelperPoint;
             var data = mVertexDataCache;
-           
+            
             data.getTexCoords(0, point);
             var u0 = point.x, v0 = point.y;
             
@@ -179,7 +179,7 @@ class Image extends Quad
             
             data.getTexCoords(2, point);
             var u3 = point.x, v3 = point.y;
-
+            
             var tex = @:privateAccess mTexture.base.__getTexture();
             mBatcherQuadTextureData = BatcherQuadTextureData.createRegion(tex,
                 u0, v0,
@@ -236,11 +236,11 @@ class Image extends Quad
         var quad = mBatcherQuad;
         var data = sHelperVertexData;
         var point = sHelperPoint;
-
+        
         copyVertexDataTransformedTo(data, 0, support.modelViewMatrix);
         
         var vertexData = quad.vertexData;        
-
+        
         data.getPosition(0, point);
         vertexData[0] = point.x;
         vertexData[1] = point.y;

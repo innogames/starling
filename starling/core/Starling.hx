@@ -545,10 +545,10 @@ class Starling extends EventDispatcher
         
         if (!mShareContext)
             RenderSupport._clear(mStage.color, 1.0);
-                
+        
         mStage.render(mSupport, 1.0);
         mSupport.finishQuadBatch();
-                
+        
         if (mStatsDisplay != null)
             mStatsDisplay.drawCount = mSupport.drawCount;
         
@@ -895,7 +895,7 @@ class Starling extends EventDispatcher
             programs.remove(name);
         }
     }
-            
+    
     public function removeCurrentProgram():Void {
         // Context's __program needs to be cleared as BatchRenderer uses different program. If not cleared, Starling will
         // try to set its program's parameters to BatchRenderer's program which results with WebGL warnings

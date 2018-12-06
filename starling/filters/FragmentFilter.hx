@@ -298,7 +298,7 @@ class FragmentFilter
                 {
                     // draw into back buffer, at original (stage) coordinates
                     support.popClipRect();
-                    support.projectionMatrix   = projMatrix;
+                    support.projectionMatrix = projMatrix;
                     support.projectionMatrix3D = projMatrix3D;
                     support.renderTarget = previousRenderTarget;
                     support.translateMatrix(mOffsetX, mOffsetY);
@@ -330,15 +330,15 @@ class FragmentFilter
         if (intoCache)
         {
             // restore support settings
-            support.projectionMatrix.copyFrom(projMatrix);
+            support.popClipRect();
+            support.projectionMatrix = projMatrix;
             support.projectionMatrix3D = projMatrix3D;
             support.renderTarget = previousRenderTarget;
-            support.popClipRect();
             
             // Create an image containing the cache. To have a display object that contains
             // the filter output in object coordinates. That way we can modify it with a transformation matrix.
             
-            var image: Image = new Image(cacheTexture);
+            var image:Image = new Image(cacheTexture);
             
             // targetSpace could be null, so we calculate the matrix from the other side
             // and invert.
