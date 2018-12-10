@@ -185,7 +185,8 @@ class Image extends Quad
                 u0, v0,
                 u1, v1,
                 u2, v2,
-                u3, v3
+                u3, v3,
+                mTexture.premultipliedAlpha
             );
         }
         
