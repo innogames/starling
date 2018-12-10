@@ -255,6 +255,7 @@ class TextureMask extends DisplayObject
         context.setTextureAt(0, null);
         context.setVertexBufferAt(0, null);
         context.setVertexBufferAt(1, null);
+        Starling.current.removeCurrentProgram(); 
     }
 
     /** The texture that is currently in use. */

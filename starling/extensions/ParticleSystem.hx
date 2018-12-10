@@ -429,6 +429,7 @@ class ParticleSystem extends DisplayObject implements IAnimatable
         context.setVertexBufferAt(0, null);
         context.setVertexBufferAt(1, null);
         context.setVertexBufferAt(2, null);
+        Starling.current.removeCurrentProgram();
     }
     
     /** Initialize the <tt>ParticleSystem</tt> with particles distributed randomly throughout

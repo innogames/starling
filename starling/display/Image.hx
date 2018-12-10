@@ -10,16 +10,22 @@
 
 package starling.display;
 
+import flash.geom.ColorTransform;
 import flash.display.Bitmap;
 import flash.errors.ArgumentError;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import openfl._internal.renderer.opengl.batcher.Quad as BatcherQuad;
+import openfl._internal.renderer.opengl.batcher.QuadTextureData as BatcherQuadTextureData;
+
 import starling.core.RenderSupport;
 import starling.textures.Texture;
 import starling.textures.TextureSmoothing;
 import starling.utils.VertexData;
+import starling.utils.BlendModeUtils;
+import starling.core.Starling;
 
 /** An Image is a quad with a texture mapped onto it.
  *  
@@ -41,9 +47,17 @@ class Image extends Quad
 {
     private var mTexture:Texture;
     private var mSmoothing:String;
+    private var mBatcherQuad:BatcherQuad;
     
     private var mVertexDataCache:VertexData;
     private var mVertexDataCacheInvalid:Bool;
+    
+    // TODO: this should really be part of the texture, but let's make it step by step
+    private var mBatcherQuadTextureData:BatcherQuadTextureData;
+    
+    /** Helper objects. */
+    private static var sHelperVertexData:VertexData = new VertexData(4);
+    private static var sHelperPoint:Point = new Point();
     
     /** Creates a quad with a texture mapped onto it. */
     public function new(texture:Texture)
@@ -56,6 +70,8 @@ class Image extends Quad
             var pma:Bool = texture.premultipliedAlpha;
             
             super(width, height, 0xffffff, pma);
+            
+            mBatcherQuad = new BatcherQuad();
             
             mVertexData.setTexCoords(0, 0.0, 0.0);
             mVertexData.setTexCoords(1, 1.0, 0.0);
@@ -86,6 +102,23 @@ class Image extends Quad
         mVertexDataCacheInvalid = true;
     }
     
+    /** @inheritDoc */
+    private override function set_color(value:UInt):UInt 
+    {
+        super.set_color(value);
+        
+        var colorTransform = mBatcherQuad.colorTransform;
+        if (colorTransform == null) {
+            colorTransform = mBatcherQuad.colorTransform = new ColorTransform();
+        }
+        var multiplier:Float = mVertexData.premultipliedAlpha ? alpha : 1.0;
+        colorTransform.redMultiplier = ((value >> 16) & 0xff) / 255.0 * multiplier;
+        colorTransform.blueMultiplier = ((value >>  8) & 0xff) / 255.0 * multiplier;
+        colorTransform.greenMultiplier = (value & 0xff) / 255.0 * multiplier;
+        
+        return value;
+    }
+    
     /** Readjusts the dimensions of the image according to its current texture. Call this method 
      * to synchronize image and texture size after assigning a texture with a different size.*/
     public function readjustSize():Void
@@ -99,20 +132,6 @@ class Image extends Quad
         mVertexData.setPosition(2, 0.0, height);
         mVertexData.setPosition(3, width, height); 
         
-        onVertexDataChanged();
-    }
-    
-    /** Sets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. */
-    public function setTexCoords(vertexID:Int, coords:Point):Void
-    {
-        mVertexData.setTexCoords(vertexID, coords.x, coords.y);
-        onVertexDataChanged();
-    }
-    
-    /** Sets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. */
-    public function setTexCoordsTo(vertexID:Int, u:Float, v:Float):Void
-    {
-        mVertexData.setTexCoords(vertexID, u, v);
         onVertexDataChanged();
     }
     
@@ -145,6 +164,30 @@ class Image extends Quad
             mVertexDataCacheInvalid = false;
             mVertexData.copyTo(mVertexDataCache);
             mTexture.adjustVertexData(mVertexDataCache, 0, 4);
+            
+            var point = sHelperPoint;
+            var data = mVertexDataCache;
+            
+            data.getTexCoords(0, point);
+            var u0 = point.x, v0 = point.y;
+            
+            data.getTexCoords(1, point);
+            var u1 = point.x, v1 = point.y;
+            
+            data.getTexCoords(3, point);
+            var u2 = point.x, v2 = point.y;
+            
+            data.getTexCoords(2, point);
+            var u3 = point.x, v3 = point.y;
+            
+            var tex = @:privateAccess mTexture.base.__getTexture();
+            mBatcherQuadTextureData = BatcherQuadTextureData.createRegion(tex,
+                u0, v0,
+                u1, v1,
+                u2, v2,
+                u3, v3,
+                mTexture.premultipliedAlpha
+            );
         }
         
         mVertexDataCache.copyTransformedTo(targetData, targetVertexID, matrix, 0, 4);
@@ -186,6 +229,43 @@ class Image extends Quad
     /** @inheritDoc */
     public override function render(support:RenderSupport, parentAlpha:Float):Void
     {
-        support.batchQuad(this, parentAlpha, mTexture, mSmoothing);
+        prepareQuad(support, parentAlpha);        
+        support.batcher.render(mBatcherQuad);
+    }
+    
+     private function prepareQuad(support:RenderSupport, parentAlpha:Float): Void {
+        var quad = mBatcherQuad;
+        var data = sHelperVertexData;
+        var point = sHelperPoint;
+        
+        copyVertexDataTransformedTo(data, 0, support.modelViewMatrix);
+        
+        var vertexData = quad.vertexData;        
+        
+        data.getPosition(0, point);
+        vertexData[0] = point.x;
+        vertexData[1] = point.y;
+        
+        data.getPosition(1, point);
+        vertexData[2] = point.x;
+        vertexData[3] = point.y;
+        
+        data.getPosition(3, point);
+        vertexData[4] = point.x;
+        vertexData[5] = point.y;
+        
+        data.getPosition(2, point);
+        vertexData[6] = point.x;
+        vertexData[7] = point.y;
+        
+        quad.blendMode = BlendModeUtils.toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha);
+        quad.smoothing = mSmoothing != TextureSmoothing.NONE;
+        quad.texture = mBatcherQuadTextureData;
+        quad.alpha = parentAlpha * mAlpha;
+    }
+    
+    public function transfromVertices(matrix: Matrix): Void {
+        mVertexData.copyTransformedTo(mVertexData, 0, matrix);
+        mVertexDataCacheInvalid = true;
     }
 }

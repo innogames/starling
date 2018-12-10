@@ -10,6 +10,7 @@
 
 package starling.core;
 
+import lime.utils.Float32Array;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage3D;
@@ -892,6 +893,14 @@ class Starling extends EventDispatcher
         {                
             program.dispose();
             programs.remove(name);
+        }
+    }
+    
+    public function removeCurrentProgram():Void {
+        // Context's __program needs to be cleared as BatchRenderer uses different program. If not cleared, Starling will
+        // try to set its program's parameters to BatchRenderer's program which results with WebGL warnings
+        if (mContext != null) {
+            @:privateAccess mContext.__program = null;
         }
     }
     

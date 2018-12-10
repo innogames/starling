@@ -10,6 +10,7 @@
 
 package starling.filters;
 
+import flash.geom.Point;
 import flash.errors.ArgumentError;
 import flash.errors.Error;
 import flash.display3D.Context3D;
@@ -109,9 +110,10 @@ class FragmentFilter
     private var mIndexBuffer:IndexBuffer3D;
     
     private var mCacheRequested:Bool;
-    private var mCache:QuadBatch;
+    private var mCache:Image;
     
     /** Helper objects. */
+    private static var sHelperPoint:Point = new Point();
     private static var sStageBounds:Rectangle = new Rectangle();
     private static var sTransformationMatrix:Matrix = new Matrix();
     
@@ -203,7 +205,7 @@ class FragmentFilter
     }
     
     private function renderPasses(object:DisplayObject, support:RenderSupport,
-                                  parentAlpha:Float, intoCache:Bool=false):QuadBatch
+                                  parentAlpha:Float, intoCache:Bool=false):Image
     {
         var passTexture:Texture;
         var cacheTexture:Texture = null;
@@ -229,7 +231,7 @@ class FragmentFilter
         if (bounds.isEmpty())
         {
             disposePassTextures();
-            return intoCache ? new QuadBatch() : null; 
+            return null; 
         }
         
         updateBuffers(context, boundsPot);
@@ -263,7 +265,6 @@ class FragmentFilter
         support.setProjectionMatrix(
             bounds.x, bounds.y, boundsPot.width, boundsPot.height,
             stage.stageWidth, stage.stageHeight, stage.cameraPosition);
-
         object.render(support, parentAlpha);
         support.finishQuadBatch();
         
@@ -297,7 +298,7 @@ class FragmentFilter
                 {
                     // draw into back buffer, at original (stage) coordinates
                     support.popClipRect();
-                    support.projectionMatrix   = projMatrix;
+                    support.projectionMatrix = projMatrix;
                     support.projectionMatrix3D = projMatrix3D;
                     support.renderTarget = previousRenderTarget;
                     support.translateMatrix(mOffsetX, mOffsetY);
@@ -321,37 +322,33 @@ class FragmentFilter
         context.setVertexBufferAt(mVertexPosAtID, null);
         context.setVertexBufferAt(mTexCoordsAtID, null);
         context.setTextureAt(mBaseTextureID, null);
+        Starling.current.removeCurrentProgram(); 
 
         support.popMatrix();
         support.popMatrix3D();
-
+        
         if (intoCache)
         {
             // restore support settings
-            support.projectionMatrix.copyFrom(projMatrix);
-            support.projectionMatrix3D.copyFrom(projMatrix3D);
-            support.renderTarget = previousRenderTarget;
             support.popClipRect();
+            support.projectionMatrix = projMatrix;
+            support.projectionMatrix3D = projMatrix3D;
+            support.renderTarget = previousRenderTarget;
             
             // Create an image containing the cache. To have a display object that contains
-            // the filter output in object coordinates, we wrap it in a QuadBatch: that way,
-            // we can modify it with a transformation matrix.
+            // the filter output in object coordinates. That way we can modify it with a transformation matrix.
             
-            var quadBatch:QuadBatch = new QuadBatch();
             var image:Image = new Image(cacheTexture);
             
             // targetSpace could be null, so we calculate the matrix from the other side
             // and invert.
 
             object.getTransformationMatrix(targetSpace, sTransformationMatrix).invert();
-            MatrixUtil.prependTranslation(sTransformationMatrix,
-                bounds.x + mOffsetX, bounds.y + mOffsetY);
-            quadBatch.addImage(image, 1.0, sTransformationMatrix);
-            quadBatch.ownsTexture = true;
-
-            return quadBatch;
-        }
-        else return null;
+            MatrixUtil.prependTranslation(sTransformationMatrix, bounds.x + mOffsetX, bounds.y + mOffsetY);
+            image.transfromVertices(sTransformationMatrix);  
+            
+            return image;
+        } else return null;        
     }
     
     // helper methods
@@ -540,23 +537,6 @@ class FragmentFilter
     {
         mCacheRequested = false;
         disposeCache();
-    }
-    
-    // flattening
-    
-    /** @private */
-    @:allow(starling) private function compile(object:DisplayObject):QuadBatch
-    {
-        var support:RenderSupport;
-        var stage:Stage = object.stage;
-        var quadBatch:QuadBatch;
-
-        support = new RenderSupport();
-        object.getTransformationMatrix(stage, support.modelViewMatrix);
-        quadBatch = renderPasses(object, support, 1.0, true);
-        support.dispose();
-
-        return quadBatch;
     }
     
     // properties
