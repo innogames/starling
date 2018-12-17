@@ -135,6 +135,20 @@ class Image extends Quad
         onVertexDataChanged();
     }
     
+    /** Sets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. */
+    public function setTexCoords(vertexID:Int, coords:Point):Void
+    {
+        mVertexData.setTexCoords(vertexID, coords.x, coords.y);
+        onVertexDataChanged();
+    }
+    
+    /** Sets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. */
+    public function setTexCoordsTo(vertexID:Int, u:Float, v:Float):Void
+    {
+        mVertexData.setTexCoords(vertexID, u, v);
+        onVertexDataChanged();
+    }
+    
     /** Gets the texture coordinates of a vertex. Coordinates are in the range [0, 1]. 
      * If you pass a 'resultPoint', the result will be stored in this point instead of 
      * creating a new object.*/
