@@ -11,18 +11,36 @@
 package starling.display;
 
 import flash.geom.Matrix;
+import flash.geom.Matrix3D;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import openfl.Vector;
+
 import starling.core.RenderSupport;
+import starling.events.Event;
 import starling.utils.MatrixUtil;
 import starling.utils.RectangleUtil;
 import starling.utils.Max;
+
+/** Dispatched on all children when the object is flattened. */
+@:meta(Event(name="flatten", type="starling.events.Event"))
 
 /** A Sprite is the most lightweight, non-abstract container class.
  *  <p>Use it as a simple means of grouping objects together in one coordinate system, or
  *  as the base class for custom display objects.</p>
  *
+ *  <strong>Flattened Sprites</strong>
+ * 
+ *  <p>The <code>flatten</code>-method allows you to optimize the rendering of static parts of 
+ *  your display list.</p>
+ *
+ *  <p>It analyzes the tree of children attached to the sprite and optimizes the rendering calls 
+ *  in a way that makes rendering extremely fast. The speed-up comes at a price, though: you 
+ *  will no longer see any changes in the properties of the children (position, rotation, 
+ *  alpha, etc.). To update the object after changes have happened, simply call 
+ *  <code>flatten</code> again, or <code>unflatten</code> the object.</p>
+ *  
  *  <strong>Clipping Rectangle</strong>
  * 
  *  <p>The <code>clipRect</code> property allows you to clip the visible area of the sprite
@@ -37,6 +55,9 @@ import starling.utils.Max;
  */
 class Sprite extends DisplayObjectContainer
 {
+    private var mFlattenedContents:Vector<QuadBatch>;
+    private var mFlattenRequested:Bool;
+    private var mFlattenOptimized:Bool;
     private var mClipRect:Rectangle;
     
     /** Helper objects. */
@@ -49,28 +70,66 @@ class Sprite extends DisplayObjectContainer
     {
         super();
     }
-
-    /**
-    * @deprecated 
-	**/
+    
+    /** @inheritDoc */
+    public override function dispose():Void
+    {
+        __disposeFlattenedContents();
+        super.dispose();
+    }
+    
+    private function __disposeFlattenedContents():Void
+    {
+        if (mFlattenedContents != null)
+        {
+            for (i in 0...mFlattenedContents.length)
+                mFlattenedContents[i].dispose();
+            
+            mFlattenedContents = null;
+        }
+    }
+    
+    /** Optimizes the sprite for optimal rendering performance. Changes in the
+     * children of a flattened sprite will not be displayed any longer. For this to happen,
+     * either call <code>flatten</code> again, or <code>unflatten</code> the sprite. 
+     * Beware that the actual flattening will not happen right away, but right before the
+     * next rendering. 
+     * 
+     * <p>When you flatten a sprite, the result of all matrix operations that are otherwise
+     * executed during rendering are cached. For this reason, a flattened sprite can be
+     * rendered with much less strain on the CPU. However, a flattened sprite will always
+     * produce at least one draw call; if it were merged together with other objects, this
+     * would cause additional matrix operations, and the optimization would have been in vain.
+     * Thus, don't just blindly flatten all your sprites, but reserve flattening for sprites
+     * with a big number of children.</p>
+     *
+     * <p>Beware that while you can add a 'mask' or 'clipRect' to a flattened sprite, any
+     * such property will be ignored on its children. Furthermore, while a 'Sprite3D' may
+     * contain a flattened sprite, a flattened sprite must not contain a 'Sprite3D'.</p>
+     *
+     * @param ignoreChildOrder If the child order is not important, you can further optimize
+     *          the number of draw calls. Naturally, this is not an option for all use-cases.
+     */
     public function flatten(ignoreChildOrder:Bool=false):Void
     {
+        mFlattenRequested = true;
+        mFlattenOptimized = ignoreChildOrder;
+        broadcastEventWith(Event.FLATTEN);
     }
     
-    /**
-    * @deprecated 
-	**/
+    /** Removes the rendering optimizations that were created when flattening the sprite.
+     * Changes to the sprite's children will immediately become visible again. */ 
     public function unflatten():Void
     {
+        mFlattenRequested = false;
+        __disposeFlattenedContents();
     }
     
-    /**
-    * @deprecated 
-	**/
+    /** Indicates if the sprite was flattened. */
     public var isFlattened(get, never):Bool;
     private function get_isFlattened():Bool 
     { 
-        return false;
+        return (mFlattenedContents != null) || mFlattenRequested; 
     }
     
     /** The object's clipping rectangle in its local coordinate system.
@@ -157,7 +216,37 @@ class Sprite extends DisplayObjectContainer
             }
         }
         
-       super.render(support, parentAlpha);
+        if (mFlattenedContents != null || mFlattenRequested)
+        {
+            if (mFlattenedContents == null)
+                mFlattenedContents = new Vector<QuadBatch>();
+            
+            if (mFlattenRequested)
+            {
+                QuadBatch.compile(this, mFlattenedContents);
+                if (mFlattenOptimized) QuadBatch.optimize(mFlattenedContents);
+
+                support.applyClipRect(); // compiling filters might change scissor rect. :-\
+                mFlattenRequested = false;
+            }
+            
+            var alpha:Float = parentAlpha * this.alpha;
+            var numBatches:Int = mFlattenedContents.length;
+            
+            support.finishQuadBatch();
+            support.raiseDrawCount(numBatches);
+            
+            var mvpMatrix:Matrix3D = support.mvpMatrix3D;
+            
+            for (i in 0...numBatches)
+            {
+                var quadBatch:QuadBatch = mFlattenedContents[i];
+                var blendMode:String = quadBatch.blendMode == BlendMode.AUTO ?
+                    support.blendMode : quadBatch.blendMode;
+                quadBatch.renderCustom(mvpMatrix, alpha, blendMode);
+            }
+        }
+        else super.render(support, parentAlpha);
         
         if (mClipRect != null)
             support.popClipRect();
