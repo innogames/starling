@@ -288,7 +288,8 @@ class QuadBatch extends DisplayObject
         context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 1, mvpMatrix, true);
         
         var vaoRendered: Bool = QuadBatchVAOHelper.renderQuadBatch(this, context);        
-        if (vaoRendered) {           
+        if (vaoRendered) {      
+            Starling.current.removeCurrentProgram();
             return;            
         }
         
