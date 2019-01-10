@@ -107,10 +107,7 @@ class Image extends Quad
     {
         super.set_color(value);
         
-        var colorTransform = mBatcherQuad.colorTransform;
-        if (colorTransform == null) {
-            colorTransform = mBatcherQuad.colorTransform = new ColorTransform();
-        }
+        var colorTransform = mBatcherQuad.createColorTransform();
         var multiplier:Float = mVertexData.premultipliedAlpha ? alpha : 1.0;
         colorTransform.redMultiplier = ((value >> 16) & 0xff) / 255.0 * multiplier;
         colorTransform.blueMultiplier = ((value >>  8) & 0xff) / 255.0 * multiplier;
@@ -272,10 +269,8 @@ class Image extends Quad
         vertexData[6] = point.x;
         vertexData[7] = point.y;
         
-        quad.blendMode = BlendModeUtils.toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha);
-        quad.smoothing = mSmoothing != TextureSmoothing.NONE;
         quad.texture = mBatcherQuadTextureData;
-        quad.alpha = parentAlpha * mAlpha;
+        quad.setup(parentAlpha * mAlpha, quad.colorTransform, BlendModeUtils.toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha), mSmoothing != TextureSmoothing.NONE);
     }
     
     public function transfromVertices(matrix: Matrix): Void {
