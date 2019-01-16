@@ -276,6 +276,7 @@ class Image extends Quad
         vertexData[6] = point.x;
         vertexData[7] = point.y;
         
+        @:privateAccess mBatcherQuadTextureData.data = mTexture.base.__getTexture();
         quad.texture = mBatcherQuadTextureData;
         quad.setup(parentAlpha * mAlpha, mBatcherQuadColorTransform, BlendModeUtils.toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha), mSmoothing != TextureSmoothing.NONE);
     }
