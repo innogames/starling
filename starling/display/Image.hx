@@ -53,7 +53,9 @@ class Image extends Quad
     private var mVertexDataCache:VertexData;
     private var mVertexDataCacheInvalid:Bool;
     
-    // TODO: this should really be part of the texture, but let's make it step by step
+    // TODO(?): this should really be part of the texture, but not really,
+    // because Starling API provides ways to set up custom texture coordinates per Image,
+    // so we need different QuadTextureDatas as long as we use that funtionality
     private var mBatcherQuadTextureData:BatcherQuadTextureData;
     
     /** Helper objects. */
@@ -274,6 +276,7 @@ class Image extends Quad
         vertexData[6] = point.x;
         vertexData[7] = point.y;
         
+        @:privateAccess mBatcherQuadTextureData.data = mTexture.base.__getTexture();
         quad.texture = mBatcherQuadTextureData;
         quad.setup(parentAlpha * mAlpha, mBatcherQuadColorTransform, BlendModeUtils.toBatcherBlendMode(mBlendMode, mTexture.premultipliedAlpha), mSmoothing != TextureSmoothing.NONE);
     }
