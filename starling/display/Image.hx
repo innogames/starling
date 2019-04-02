@@ -117,8 +117,8 @@ class Image extends Quad
         
         var multiplier:Float = mVertexData.premultipliedAlpha ? alpha : 1.0;
         colorTransform.redMultiplier = ((value >> 16) & 0xff) / 255.0 * multiplier;
-        colorTransform.blueMultiplier = ((value >>  8) & 0xff) / 255.0 * multiplier;
-        colorTransform.greenMultiplier = (value & 0xff) / 255.0 * multiplier;
+        colorTransform.greenMultiplier = ((value >>  8) & 0xff) / 255.0 * multiplier;
+        colorTransform.blueMultiplier = (value & 0xff) / 255.0 * multiplier;
         
         return value;
     }
