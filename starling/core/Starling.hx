@@ -261,7 +261,8 @@ class Starling extends EventDispatcher
      *                       profile automatically.</li>
      *                   </ul>
      */
-    public function new(rootClass:Class<Dynamic>, stage:flash.display.Stage, 
+    @:access(starling.display.Stage.new)
+    public function new(rootClass:Class<Dynamic>, stage:flash.display.Stage,
                              viewPort:Rectangle=null, stage3D:Stage3D=null,
                              renderMode:Context3DRenderMode=AUTO, profile:Dynamic="auto")
     {
