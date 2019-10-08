@@ -86,8 +86,6 @@ class RenderSupport
     private static var sScissorRect:Rectangle = new Rectangle();
     private static var sAssembler:AGALMiniAssembler = new AGALMiniAssembler();
     private static var sMatrix3D:Matrix3D = new Matrix3D();
-    private static var sMatrixData:Vector<Float> = 
-        Vector.ofArray ([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.]);
     
     // construction
     
@@ -162,21 +160,30 @@ class RenderSupport
         var near:Float   = 1;
         var scaleX:Float = stageWidth  / width;
         var scaleY:Float = stageHeight / height;
+        
+        var sMatrixData = mProjectionMatrix3D.rawData;
 
-        // set up general perspective
-        sMatrixData[ 0] =  2 * focalLength / stageWidth;  // 0,0
-        sMatrixData[ 5] = -2 * focalLength / stageHeight; // 1,1  [negative to invert y-axis]
+        // set up general perspective and zoom in to visible area
+        sMatrixData[ 0] = ( 2 * focalLength / stageWidth ) * scaleX; // 0,0
+        sMatrixData[ 1] = 0;
+        sMatrixData[ 2] = 0;
+        sMatrixData[ 3] = 0;
+
+        sMatrixData[ 4] = 0;
+        sMatrixData[ 5] = (-2 * focalLength / stageHeight) * scaleY; // 1,1  [negative to invert y-axis]
+        sMatrixData[ 6] = 0;
+        sMatrixData[ 7] = 0;
+        
+        sMatrixData[ 8] =  scaleX - 1 - 2 * scaleX * (x - offsetX) / stageWidth;
+        sMatrixData[ 9] = -scaleY + 1 + 2 * scaleY * (y - offsetY) / stageHeight;
         sMatrixData[10] =  far / (far - near);            // 2,2
-        sMatrixData[14] = -far * near / (far - near);     // 2,3
         sMatrixData[11] =  1;                             // 3,2
+        
+        sMatrixData[12] = 0;
+        sMatrixData[13] = 0;
+        sMatrixData[14] = -far * near / (far - near);     // 2,3
+        sMatrixData[15] = 0;
 
-        // now zoom in to visible area
-        sMatrixData[0] *=  scaleX;
-        sMatrixData[5] *=  scaleY;
-        sMatrixData[8]  =  scaleX - 1 - 2 * scaleX * (x - offsetX) / stageWidth;
-        sMatrixData[9]  = -scaleY + 1 + 2 * scaleY * (y - offsetY) / stageHeight;
-
-        mProjectionMatrix3D.copyRawDataFrom(sMatrixData);
         mProjectionMatrix3D.prependTranslation(
             -stageWidth /2.0 - offsetX,
             -stageHeight/2.0 - offsetY,
