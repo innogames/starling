@@ -107,13 +107,6 @@ class ConcreteTexture extends Texture
      * cropped or filled up with transparent pixels */
     public function uploadBitmapData(data:BitmapData, async:Dynamic=null):Void
     {
-        if (!Starling.current.isRendering && !SystemUtil.isDesktop)
-        {
-            trace("[Starling] Warning: uploading bitmap data while Starling is not rendering " +
-                  "may cause a crash on some platforms. Ignoring request.");
-            return;
-        }
-		
 		var doAsync:Bool = false;
         if (Reflect.isFunction(async))
         {
