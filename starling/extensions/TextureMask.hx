@@ -19,12 +19,12 @@ import flash.display3D.IndexBuffer3D;
 import flash.display3D.VertexBuffer3D;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
+import flash.events.Event;
 
 import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.display.*;
 import starling.errors.MissingContextError;
-import starling.events.Event;
 import starling.textures.Texture;
 import starling.utils.SystemUtil;
 import starling.utils.VertexData;
@@ -255,7 +255,7 @@ class TextureMask extends DisplayObject
         context.setTextureAt(0, null);
         context.setVertexBufferAt(0, null);
         context.setVertexBufferAt(1, null);
-        Starling.current.removeCurrentProgram(); 
+        Starling.current.removeCurrentProgram();
     }
 
     /** The texture that is currently in use. */
