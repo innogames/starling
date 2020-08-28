@@ -543,11 +543,9 @@ class Starling extends EventDispatcher
             mClippedViewPort.width  / scaleX,
             mClippedViewPort.height / scaleY,
             mStage.stageWidth, mStage.stageHeight, mStage.cameraPosition);
-        
-        mSupport.batcher.setViewport(mViewPort.x, mViewPort.y, mViewPort.width, mViewPort.height);
 
         if (!mShareContext)
-            RenderSupport._clear(mStage.color, 1.0);
+            mSupport.clear(mStage.color, 1.0);
         
         mStage.render(mSupport, 1.0);
         mSupport.finishQuadBatch();
