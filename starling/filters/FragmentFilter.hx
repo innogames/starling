@@ -120,8 +120,9 @@ class FragmentFilter
     /** Helper objects that may be used recursively (thus not static). */
     private var mHelperMatrix:Matrix     = new Matrix();
     private var mHelperMatrix3D:Matrix3D = new Matrix3D();
-    private var mHelperRect:Rectangle    = new Rectangle();
+    private var mHelperRect1:Rectangle   = new Rectangle();
     private var mHelperRect2:Rectangle   = new Rectangle();
+    private var mHelperRect3:Rectangle   = new Rectangle();
 
     /** Creates a new Fragment filter with the specified number of passes and resolution.
      * This constructor may only be called by the constructor of a subclass. */
@@ -215,8 +216,9 @@ class FragmentFilter
         var scale:Float = Starling.current.contentScaleFactor;
         var projMatrix:Matrix     = mHelperMatrix;
         var projMatrix3D:Matrix3D = mHelperMatrix3D;
-        var bounds:Rectangle      = mHelperRect;
-        var boundsPot:Rectangle   = mHelperRect2;
+        var viewRect:Rectangle    = mHelperRect1;
+        var bounds:Rectangle      = mHelperRect2;
+        var boundsPot:Rectangle   = mHelperRect3;
         var previousStencilRefValue:UInt;
         var previousRenderTarget:Texture;
         var intersectWithStage:Bool;
@@ -246,6 +248,7 @@ class FragmentFilter
         // save original state (projection matrix, render target, stencil reference value)
         projMatrix.copyFrom(support.projectionMatrix);
         projMatrix3D.copyFrom(support.projectionMatrix3D);
+        viewRect.copyFrom(support.viewRect);
         previousRenderTarget = support.renderTarget;
         previousStencilRefValue = support.stencilReferenceValue;
 
@@ -300,9 +303,10 @@ class FragmentFilter
                     support.popClipRect();
                     support.projectionMatrix = projMatrix;
                     support.projectionMatrix3D = projMatrix3D;
+                    support.viewRect = viewRect;
                     support.renderTarget = previousRenderTarget;
-                    support.translateMatrix(mOffsetX, mOffsetY);
                     support.stencilReferenceValue = previousStencilRefValue;
+                    support.translateMatrix(mOffsetX, mOffsetY);
                     support.blendMode = object.blendMode;
                     support.applyBlendMode(PMA);
                 }
@@ -333,7 +337,9 @@ class FragmentFilter
             support.popClipRect();
             support.projectionMatrix = projMatrix;
             support.projectionMatrix3D = projMatrix3D;
+            support.viewRect = viewRect;
             support.renderTarget = previousRenderTarget;
+            support.stencilReferenceValue = previousStencilRefValue;
             
             // Create an image containing the cache. To have a display object that contains
             // the filter output in object coordinates. That way we can modify it with a transformation matrix.

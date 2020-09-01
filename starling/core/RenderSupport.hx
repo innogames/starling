@@ -68,6 +68,8 @@ class RenderSupport
     private var mMatrixStack3D:Vector<Matrix3D>;
     private var mMatrixStack3DSize:Int;
 
+    private var mViewRect:Rectangle;
+    
     private var mDrawCount:Int;
     private var mBlendMode:String;
 
@@ -106,13 +108,16 @@ class RenderSupport
         mMatrixStack3D = new Vector<Matrix3D>();
         mMatrixStack3DSize = 0;
         
+        mViewRect = new Rectangle();
+        
         mDrawCount = 0;
         mBlendMode = BlendMode.NORMAL;
+        
         mClipRectStack = new Vector<Rectangle>();
         mClipRectStackSize = 0;
         
-        mCurrentQuadBatchID = 0;
         mQuadBatches = Vector.ofArray ([new QuadBatch(true)]);
+        mCurrentQuadBatchID = 0;
 
         loadIdentity();
         setProjectionMatrix(0, 0, 400, 300);
@@ -182,9 +187,11 @@ class RenderSupport
             -stageHeight/2.0 - offsetY,
             focalLength);
 
-        applyClipRect();
+        mViewRect.setTo(x, y, width, height);
         
-        updateBatchersProjectionMatrix();
+        applyClipRect();
+        updateBatcherProjectionMatrix();
+        updateBatcherViewRect();
     }
 
     /** Sets up the projection matrix for ortographic 2D rendering. */
@@ -343,7 +350,19 @@ class RenderSupport
     private function set_projectionMatrix3D(value:Matrix3D):Matrix3D
     {
         mProjectionMatrix3D.copyFrom(value);
-        updateBatchersProjectionMatrix();
+        applyClipRect();
+        updateBatcherProjectionMatrix();
+        return value;
+    }
+
+    /** Returns the current view rect.
+     * CAUTION: Use with care! Each call returns the same instance. */
+    public var viewRect(get, set):Rectangle;
+    private function get_viewRect():Rectangle { return mViewRect; }
+    private function set_viewRect(value:Rectangle):Rectangle
+    {
+        mViewRect.copyFrom(value);
+        updateBatcherViewRect();
         return value;
     }
 
@@ -395,7 +414,6 @@ class RenderSupport
             batcher.flipVertical();
             Starling.current.context.setRenderToTexture(target.base,
                     SystemUtil.supportsDepthAndStencil, antiAliasing);
-            
         } else {
             batcher.unflipVertical();
             Starling.current.context.setRenderToBackBuffer();
@@ -766,14 +784,24 @@ class RenderSupport
     public var batcher(get, never):BatchRenderer;
     inline function get_batcher() return @:privateAccess Starling.current.context.__renderSession.batcher;
     
-    private function updateBatchersProjectionMatrix(): Void {
+    private function updateBatcherProjectionMatrix(): Void {
         if (Starling.current.context == null) {
             return;
         }
         
-        for (i in 0...16) {
-                sBatcherProjectionMatrix[i] = projectionMatrix3D.rawData[i];
+        for (i in 0...16)
+        {
+            sBatcherProjectionMatrix[i] = mProjectionMatrix3D.rawData[i];
         }
+        
         batcher.projectionMatrix = sBatcherProjectionMatrix;
+    }
+    
+    private function updateBatcherViewRect(): Void {
+        if (Starling.current.context == null) {
+            return;
+        }
+        
+        batcher.setViewport(mViewRect.x, mViewRect.y, mViewRect.width, mViewRect.height);
     }
 }
