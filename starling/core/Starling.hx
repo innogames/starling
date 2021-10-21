@@ -835,7 +835,7 @@ class Starling extends EventDispatcher
 
         // allow objects that depend on mouse-over state to be updated immediately
         if (event.type == MouseEvent.MOUSE_UP && Mouse.supportsCursor)
-            mTouchProcessor.enqueue(touchID, TouchPhase.HOVER, globalX, globalY);
+            mTouchProcessor.enqueue(touchID, TouchPhase.HOVER, globalX, globalY, null, null, null, nativeTarget);
     }
 
     private var touchEventTypes(get, never):Array<String>;
