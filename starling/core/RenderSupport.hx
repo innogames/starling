@@ -44,8 +44,8 @@ import starling.utils.SystemUtil;
 
 /** A class that contains helper methods simplifying Stage3D rendering.
  *
- *  A RenderSupport instance is passed to any "render" method of display objects. 
- *  It allows manipulation of the current transformation matrix (similar to the matrix 
+ *  A RenderSupport instance is passed to any "render" method of display objects.
+ *  It allows manipulation of the current transformation matrix (similar to the matrix
  *  manipulation methods of OpenGL 1.x) and other helper methods.
  */
 class RenderSupport
@@ -53,29 +53,29 @@ class RenderSupport
     private static inline var RENDER_TARGET_NAME:String = "Starling.renderTarget";
 
     // members
-    
+
     private var mProjectionMatrix:Matrix;
     private var mModelViewMatrix:Matrix;
     private var mMvpMatrix:Matrix;
-    
+
     private var mMatrixStack:Vector<Matrix>;
     private var mMatrixStackSize:Int;
-    
+
     private var mProjectionMatrix3D:Matrix3D;
     private var mModelViewMatrix3D:Matrix3D;
     private var mMvpMatrix3D:Matrix3D;
-    
+
     private var mMatrixStack3D:Vector<Matrix3D>;
     private var mMatrixStack3DSize:Int;
 
     private var mViewRect:Rectangle;
-    
+
     private var mDrawCount:Int;
     private var mBlendMode:String;
 
     private var mClipRectStack:Vector<Rectangle>;
     private var mClipRectStackSize:Int;
-    
+
     private var mQuadBatches:Vector<QuadBatch>;
     private var mCurrentQuadBatchID:Int;
 
@@ -88,11 +88,11 @@ class RenderSupport
     private static var sScissorRect:Rectangle = new Rectangle();
     private static var sAssembler:AGALMiniAssembler = new AGALMiniAssembler();
     private static var sMatrix3D:Matrix3D = new Matrix3D();
-    private static var sMatrixData:Vector<Float> = 
+    private static var sMatrixData:Vector<Float> =
         Vector.ofArray ([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.]);
-    
+
     // construction
-    
+
     /** Creates a new RenderSupport object with an empty matrix stack. */
     public function new()
     {
@@ -101,35 +101,35 @@ class RenderSupport
         mMvpMatrix = new Matrix();
         mMatrixStack = new Vector<Matrix>();
         mMatrixStackSize = 0;
-        
+
         mProjectionMatrix3D = new Matrix3D();
         mModelViewMatrix3D = new Matrix3D();
         mMvpMatrix3D = new Matrix3D();
         mMatrixStack3D = new Vector<Matrix3D>();
         mMatrixStack3DSize = 0;
-        
+
         mViewRect = new Rectangle();
-        
+
         mDrawCount = 0;
         mBlendMode = BlendMode.NORMAL;
-        
+
         mClipRectStack = new Vector<Rectangle>();
         mClipRectStackSize = 0;
-        
+
         mQuadBatches = Vector.ofArray ([new QuadBatch(true)]);
         mCurrentQuadBatchID = 0;
 
         loadIdentity();
         setProjectionMatrix(0, 0, 400, 300);
     }
-    
+
     /** Disposes all quad batches. */
     public function dispose():Void
     {
         for (quadBatch in mQuadBatches)
             quadBatch.dispose();
     }
-    
+
     // matrix manipulation
 
     /** Sets up the projection matrices for 2D and 3D rendering.
@@ -188,7 +188,7 @@ class RenderSupport
             focalLength);
 
         mViewRect.setTo(x, y, width, height);
-        
+
         applyClipRect();
         updateBatcherProjectionMatrix();
         updateBatcherViewRect();
@@ -203,59 +203,59 @@ class RenderSupport
         setProjectionMatrix(x, y, width, height,
             stage.stageWidth, stage.stageHeight, stage.cameraPosition);
     }
-    
+
     /** Changes the modelview matrix to the identity matrix. */
     public function loadIdentity():Void
     {
         mModelViewMatrix.identity();
         mModelViewMatrix3D.identity();
     }
-    
+
     /** Prepends a translation to the modelview matrix. */
     public function translateMatrix(dx:Float, dy:Float):Void
     {
         MatrixUtil.prependTranslation(mModelViewMatrix, dx, dy);
     }
-    
+
     /** Prepends a rotation (angle in radians) to the modelview matrix. */
     public function rotateMatrix(angle:Float):Void
     {
         MatrixUtil.prependRotation(mModelViewMatrix, angle);
     }
-    
+
     /** Prepends an incremental scale change to the modelview matrix. */
     public function scaleMatrix(sx:Float, sy:Float):Void
     {
         MatrixUtil.prependScale(mModelViewMatrix, sx, sy);
     }
-    
+
     /** Prepends a matrix to the modelview matrix by multiplying it with another matrix. */
     public function prependMatrix(matrix:Matrix):Void
     {
         MatrixUtil.prependMatrix(mModelViewMatrix, matrix);
     }
-    
+
     /** Prepends translation, scale and rotation of an object to the modelview matrix. */
     public function transformMatrix(object:DisplayObject):Void
     {
         MatrixUtil.prependMatrix(mModelViewMatrix, object.transformationMatrix);
     }
-    
+
     /** Pushes the current modelview matrix to a stack from which it can be restored later. */
     public function pushMatrix():Void
     {
         if (mMatrixStack.length < mMatrixStackSize + 1)
             mMatrixStack.push(new Matrix());
-    
+
         mMatrixStack[mMatrixStackSize++].copyFrom(mModelViewMatrix);
     }
-    
+
     /** Restores the modelview matrix that was last pushed to the stack. */
     public function popMatrix():Void
     {
         mModelViewMatrix.copyFrom(mMatrixStack[--mMatrixStackSize]);
     }
-    
+
     /** Empties the matrix stack, resets the modelview matrix to the identity matrix. */
     public function resetMatrix():Void
     {
@@ -263,14 +263,14 @@ class RenderSupport
         mMatrixStack3DSize = 0;
         loadIdentity();
     }
-    
+
     /** Prepends translation, scale and rotation of an object to a custom matrix. */
     public static function transformMatrixForObject(matrix:Matrix, object:DisplayObject):Void
     {
         MatrixUtil.prependMatrix(matrix, object.transformationMatrix);
     }
-    
-    /** Calculates the product of modelview and projection matrix. 
+
+    /** Calculates the product of modelview and projection matrix.
      * CAUTION: Use with care! Each call returns the same instance. */
     public var mvpMatrix(get, never):Matrix;
     private function get_mvpMatrix():Matrix
@@ -279,25 +279,25 @@ class RenderSupport
         mMvpMatrix.concat(mProjectionMatrix);
         return mMvpMatrix;
     }
-    
+
     /** Returns the current modelview matrix.
      * CAUTION: Use with care! Each call returns the same instance. */
     public var modelViewMatrix(get, never):Matrix;
     private function get_modelViewMatrix():Matrix { return mModelViewMatrix; }
-    
+
     /** Returns the current projection matrix.
      * CAUTION: Use with care! Each call returns the same instance. */
     public var projectionMatrix(get, set):Matrix;
     private function get_projectionMatrix():Matrix { return mProjectionMatrix; }
-    private function set_projectionMatrix(value:Matrix):Matrix 
+    private function set_projectionMatrix(value:Matrix):Matrix
     {
         mProjectionMatrix.copyFrom(value);
         applyClipRect();
         return mProjectionMatrix;
     }
-    
+
     // 3d transformations
-    
+
     /** Prepends translation, scale and rotation of an object to the 3D modelview matrix.
      * The current contents of the 2D modelview matrix is stored in the 3D modelview matrix
      * before doing so; the 2D modelview matrix is then reset to the identity matrix. */
@@ -307,24 +307,24 @@ class RenderSupport
         mModelViewMatrix3D.prepend(object.transformationMatrix3D);
         mModelViewMatrix.identity();
     }
-    
+
     /** Pushes the current 3D modelview matrix to a stack from which it can be restored later. */
     public function pushMatrix3D():Void
     {
         if (mMatrixStack3D.length < mMatrixStack3DSize + 1)
             mMatrixStack3D.push(new Matrix3D());
-        
+
         mMatrixStack3D[mMatrixStack3DSize++].copyFrom(mModelViewMatrix3D);
     }
-    
+
     /** Restores the 3D modelview matrix that was last pushed to the stack. */
     public function popMatrix3D():Void
     {
         mModelViewMatrix3D.copyFrom(mMatrixStack3D[--mMatrixStack3DSize]);
     }
-    
+
     /** Calculates the product of modelview and projection matrix and stores it in a 3D matrix.
-     * Different to 'mvpMatrix', this also takes 3D transformations into account. 
+     * Different to 'mvpMatrix', this also takes 3D transformations into account.
      * CAUTION: Use with care! Each call returns the same instance. */
     public var mvpMatrix3D(get, never):Matrix3D;
     private function get_mvpMatrix3D():Matrix3D
@@ -339,10 +339,10 @@ class RenderSupport
             mMvpMatrix3D.prepend(mModelViewMatrix3D);
             mMvpMatrix3D.prepend(MatrixUtil.convertTo3D(mModelViewMatrix, sMatrix3D));
         }
-        
+
         return mMvpMatrix3D;
     }
-    
+
     /** Returns the current 3D projection matrix.
      * CAUTION: Use with care! Each call returns the same instance. */
     public var projectionMatrix3D(get, set):Matrix3D;
@@ -367,13 +367,13 @@ class RenderSupport
     }
 
     // blending
-    
+
     /** Activates the current blend mode on the active rendering context. */
     public function applyBlendMode(premultipliedAlpha:Bool):Void
     {
         setBlendFactors(premultipliedAlpha, mBlendMode);
     }
-    
+
     /** The blend mode to be used on rendering. To apply the factor, you have to manually call
      * 'applyBlendMode' (because the actual blend factors depend on the PMA mode). */
     public var blendMode(get, set):String;
@@ -383,10 +383,10 @@ class RenderSupport
         if (value != BlendMode.AUTO) mBlendMode = value;
         return value;
     }
-    
+
     // render targets
-    
-    /** The texture that is currently being rendered into, or 'null' to render into the 
+
+    /** The texture that is currently being rendered into, or 'null' to render into the
      * back buffer. If you set a new target, it is immediately activated. */
     public var renderTarget(get, set):Texture;
     private function get_renderTarget():Texture
@@ -394,7 +394,7 @@ class RenderSupport
         return Starling.current.contextData[RENDER_TARGET_NAME];
     }
 
-    private function set_renderTarget(target:Texture):Texture 
+    private function set_renderTarget(target:Texture):Texture
     {
         setRenderTarget(target);
         return target;
@@ -410,7 +410,7 @@ class RenderSupport
         Starling.current.contextData[RENDER_TARGET_NAME] = target;
         applyClipRect();
 
-        if (target != null) {     
+        if (target != null) {
             batcher.flipVertical();
             Starling.current.context.setRenderToTexture(target.base,
                     SystemUtil.supportsDepthAndStencil, antiAliasing);
@@ -419,34 +419,34 @@ class RenderSupport
             Starling.current.context.setRenderToBackBuffer();
         }
     }
-    
+
     // clipping
-    
+
     /** The clipping rectangle can be used to limit rendering in the current render target to
      * a certain area. This method expects the rectangle in stage coordinates. Internally,
-     * it uses the 'scissorRectangle' of stage3D, which works with pixel coordinates. 
+     * it uses the 'scissorRectangle' of stage3D, which works with pixel coordinates.
      * Per default, any pushed rectangle is intersected with the previous rectangle;
      * the method returns that intersection. */
     public function pushClipRect(rectangle:Rectangle, intersectWithCurrent:Bool=true):Rectangle
     {
         if (mClipRectStack.length < mClipRectStackSize + 1)
             mClipRectStack.push(new Rectangle());
-        
+
         mClipRectStack[mClipRectStackSize].copyFrom(rectangle);
         rectangle = mClipRectStack[mClipRectStackSize];
-        
+
         // intersect with the last pushed clip rect
         if (intersectWithCurrent && mClipRectStackSize > 0)
-            RectangleUtil.intersect(rectangle, mClipRectStack[mClipRectStackSize-1], 
+            RectangleUtil.intersect(rectangle, mClipRectStack[mClipRectStackSize-1],
                                     rectangle);
-        
+
         ++mClipRectStackSize;
         applyClipRect();
-        
+
         // return the intersected clip rect so callers can skip draw calls if it's empty
         return rectangle;
     }
-    
+
     /** Restores the clipping rectangle that was last pushed to the stack. */
     public function popClipRect():Void
     {
@@ -463,16 +463,16 @@ class RenderSupport
     public function applyClipRect():Void
     {
         finishQuadBatch();
-        
+
         var context:Context3D = Starling.current.context;
         if (context == null) return;
-        
+
         if (mClipRectStackSize > 0)
         {
             var width:Int, height:Int;
             var rect:Rectangle = mClipRectStack[mClipRectStackSize-1];
             var renderTarget:Texture = this.renderTarget;
-            
+
             if (renderTarget != null)
             {
                 width  = Std.int(renderTarget.root.nativeWidth);
@@ -483,23 +483,23 @@ class RenderSupport
                 width  = Starling.current.backBufferWidth;
                 height = Starling.current.backBufferHeight;
             }
-            
+
             // convert to pixel coordinates (matrix transformation ends up in range [-1, 1])
             MatrixUtil.transformCoords(mProjectionMatrix, rect.x, rect.y, sPoint);
             sClipRect.x = (sPoint.x * 0.5 + 0.5) * width;
             sClipRect.y = (0.5 - sPoint.y * 0.5) * height;
-            
+
             MatrixUtil.transformCoords(mProjectionMatrix, rect.right, rect.bottom, sPoint);
             sClipRect.right  = (sPoint.x * 0.5 + 0.5) * width;
             sClipRect.bottom = (0.5 - sPoint.y * 0.5) * height;
-            
+
             sBufferRect.setTo(0, 0, width, height);
             RectangleUtil.intersect(sClipRect, sBufferRect, sScissorRect);
-            
+
             // an empty rectangle is not allowed, so we set it to the smallest possible size
             if (sScissorRect.width < 1 || sScissorRect.height < 1)
                 sScissorRect.setTo(0, 0, 1, 1);
-            
+
             context.setScissorRectangle(sScissorRect);
         }
         else
@@ -592,24 +592,24 @@ class RenderSupport
     }
 
     // optimized quad rendering
-    
+
     /** Adds a quad to the current batch of unrendered quads. If there is a state change,
      * all previous quads are rendered at once, and the batch is reset. */
-    public function batchQuad(quad:Quad, parentAlpha:Float, 
+    public function batchQuad(quad:Quad, parentAlpha:Float,
                               texture:Texture=null, smoothing:String=null):Void
     {
-        if (mQuadBatches[mCurrentQuadBatchID].isStateChange(quad.tinted, parentAlpha, texture, 
+        if (mQuadBatches[mCurrentQuadBatchID].isStateChange(quad.tinted, parentAlpha, texture,
                                                             smoothing, mBlendMode))
         {
             finishQuadBatch();
         }
-        
-        mQuadBatches[mCurrentQuadBatchID].addQuad(quad, parentAlpha, texture, smoothing, 
+
+        mQuadBatches[mCurrentQuadBatchID].addQuad(quad, parentAlpha, texture, smoothing,
                                                   mModelViewMatrix, mBlendMode);
     }
-    
-    /** Adds a batch of quads to the current batch of unrendered quads. If there is a state 
-     * change, all previous quads are rendered at once. 
+
+    /** Adds a batch of quads to the current batch of unrendered quads. If there is a state
+     * change, all previous quads are rendered at once.
      *
      * <p>Note that copying the contents of the QuadBatch to the current "cumulative"
      * batch takes some time. If the batch consists of more than just a few quads,
@@ -624,20 +624,20 @@ class RenderSupport
         {
             finishQuadBatch();
         }
-        
-        mQuadBatches[mCurrentQuadBatchID].addQuadBatch(quadBatch, parentAlpha, 
+
+        mQuadBatches[mCurrentQuadBatchID].addQuadBatch(quadBatch, parentAlpha,
                                                        mModelViewMatrix, mBlendMode);
     }
-    
+
     /** Renders the current quad batch and resets it. */
     public function finishQuadBatch():Void
     {
         if (Starling.current.context != null) {
             batcher.flush();
         }
-        
+
         var currentBatch:QuadBatch = mQuadBatches[mCurrentQuadBatchID];
-        
+
         if (currentBatch.numQuads != 0)
         {
             if (mMatrixStack3DSize == 0)
@@ -650,17 +650,17 @@ class RenderSupport
                 mMvpMatrix3D.prepend(mModelViewMatrix3D);
                 currentBatch.renderCustom(mMvpMatrix3D);
             }
-            
+
             currentBatch.reset();
-            
+
             ++mCurrentQuadBatchID;
             ++mDrawCount;
-            
+
             if (mQuadBatches.length <= mCurrentQuadBatchID)
                 mQuadBatches.push(new QuadBatch(true));
         }
     }
-    
+
     /** Resets matrix stack, blend mode, quad batch index, and draw count. */
     public function nextFrame():Void
     {
@@ -679,7 +679,7 @@ class RenderSupport
     {
         var numUsedBatches:Int  = mCurrentQuadBatchID + 1;
         var numTotalBatches:Int = mQuadBatches.length;
-        
+
         if (numTotalBatches >= 16 && numTotalBatches > 2*numUsedBatches)
         {
             var numToRemove:Int = numTotalBatches - numUsedBatches;
@@ -689,69 +689,84 @@ class RenderSupport
     }
 
     // other helper methods
-    
+
     /** Deprecated. Call 'setBlendFactors' instead. */
     public static function setDefaultBlendFactors(premultipliedAlpha:Bool):Void
     {
         setBlendFactors(premultipliedAlpha);
     }
-    
+
     /** Sets up the blending factors that correspond with a certain blend mode. */
     public static function setBlendFactors(premultipliedAlpha:Bool, blendMode:String="normal"):Void
     {
-        var blendFactors:Array<Context3DBlendFactor> = BlendMode.getBlendFactors(blendMode, premultipliedAlpha); 
+        var blendFactors:Array<Context3DBlendFactor> = BlendMode.getBlendFactors(blendMode, premultipliedAlpha);
         Starling.current.context.setBlendFactors(blendFactors[0], blendFactors[1]);
     }
-    
+
     /** Clears the render context with a certain color and alpha value. */
     public static function _clear(rgb:UInt=0, alpha:Float=0.0):Void
     {
         Starling.current.context.clear(
-            Color.getRed(rgb)   / 255.0, 
-            Color.getGreen(rgb) / 255.0, 
+            Color.getRed(rgb)   / 255.0,
+            Color.getGreen(rgb) / 255.0,
             Color.getBlue(rgb)  / 255.0,
             alpha);
     }
-    
+
     /** Clears the render context with a certain color and alpha value. */
     public function clear(rgb:UInt=0, alpha:Float=0.0):Void
     {
         RenderSupport._clear(rgb, alpha);
     }
-    
+
     /** Assembles fragment- and vertex-shaders, passed as Strings, to a Program3D. If you
      * pass a 'resultProgram', it will be uploaded to that program; otherwise, a new program
-     * will be created on the current Stage3D context. */ 
+     * will be created on the current Stage3D context. */
     public static function assembleAgal(vertexShader:String, fragmentShader:String,
                                         resultProgram:Program3D=null):Program3D
     {
-        if (resultProgram == null) 
+        if (resultProgram == null)
         {
             var context:Context3D = Starling.current.context;
             if (context == null) throw new MissingContextError();
             resultProgram = context.createProgram();
         }
-        
+
         resultProgram.upload(
             sAssembler.assemble(Context3DProgramType.VERTEX, vertexShader),
             sAssembler.assemble(Context3DProgramType.FRAGMENT, fragmentShader));
-        
+
         return resultProgram;
     }
-    
-    /** Returns the flags that are required for AGAL texture lookup, 
+
+    public static function assembleGLSL(vertexShader:String, fragmentShader:String,
+                                        resultProgram:Program3D=null):Program3D
+    {
+        if (resultProgram == null)
+        {
+            var context:Context3D = Starling.current.context;
+            if (context == null) throw new MissingContextError();
+            resultProgram = context.createProgram();
+        }
+
+        resultProgram.uploadSources(vertexShader, fragmentShader);
+
+        return resultProgram;
+    }
+
+    /** Returns the flags that are required for AGAL texture lookup,
      * including the '&lt;' and '&gt;' delimiters. */
     public static function getTextureLookupFlags(format:Context3DTextureFormat, mipMapping:Bool,
                                                  repeat:Bool=false,
                                                  smoothing:String="bilinear"):String
     {
         var options:Array<String> = ["2d", repeat ? "repeat" : "clamp"];
-        
+
         if (format == Context3DTextureFormat.COMPRESSED)
             options.push("dxt1");
         else if (format == Context3DTextureFormat.COMPRESSED_ALPHA)
             options.push("dxt5");
-        
+
         if (smoothing == TextureSmoothing.NONE)
         {
             options.push("nearest");
@@ -767,41 +782,41 @@ class RenderSupport
             options.push("linear");
             options.push(mipMapping ? "miplinear" : "mipnone");
         }
-        
+
         return "<" + options.join(",") + ">";
     }
-    
+
     // statistics
-    
+
     /** Raises the draw count by a specific value. Call this method in custom render methods
      * to keep the statistics display in sync. */
     public function raiseDrawCount(value:UInt=1):Void { mDrawCount += value; }
-    
+
     /** Indicates the number of stage3D draw calls. */
     public var drawCount(get, never):Int;
     private function get_drawCount():Int { return mDrawCount; }
-    
+
     public var batcher(get, never):BatchRenderer;
     inline function get_batcher() return @:privateAccess Starling.current.context.__renderSession.batcher;
-    
+
     private function updateBatcherProjectionMatrix(): Void {
         if (Starling.current.context == null) {
             return;
         }
-        
+
         for (i in 0...16)
         {
             sBatcherProjectionMatrix[i] = mProjectionMatrix3D.rawData[i];
         }
-        
+
         batcher.projectionMatrix = sBatcherProjectionMatrix;
     }
-    
+
     private function updateBatcherViewRect(): Void {
         if (Starling.current.context == null) {
             return;
         }
-        
+
         batcher.setViewport(mViewRect.x, mViewRect.y, mViewRect.width, mViewRect.height);
     }
 }
