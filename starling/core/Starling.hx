@@ -876,7 +876,7 @@ class Starling extends EventDispatcher
         return program;
     }
 
-    /** Compiles a shader-program and registers it under a certain name.
+    /** Compiles a AGAL shader-program and registers it under a certain name.
      * If the name was already used, the previous program is overwritten. */
     public function registerProgramFromSource(name:String, vertexShader:String,
                                               fragmentShader:String):Program3D
@@ -884,6 +884,19 @@ class Starling extends EventDispatcher
         deleteProgram(name);
 
         var program:Program3D = RenderSupport.assembleAgal(vertexShader, fragmentShader);
+        programs[name] = program;
+
+        return program;
+    }
+
+    /** Compiles a GLSL shader-program and registers it under a certain name.
+     * If the name was already used, the previous program is overwritten. */
+    public function registerProgramFromGLSL(name:String, vertexShader:String,
+                                            fragmentShader:String):Program3D
+    {
+        deleteProgram(name);
+
+        var program:Program3D = RenderSupport.assembleGLSL(vertexShader, fragmentShader);
         programs[name] = program;
 
         return program;
