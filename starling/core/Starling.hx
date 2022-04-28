@@ -564,7 +564,8 @@ class Starling extends EventDispatcher
 
         if (forceUpdate || mPreviousViewPort.width != mViewPort.width ||
             mPreviousViewPort.height != mViewPort.height ||
-            mPreviousViewPort.x != mViewPort.x || mPreviousViewPort.y != mViewPort.y)
+            mPreviousViewPort.x != mViewPort.x || mPreviousViewPort.y != mViewPort.y || 
+            (mSupportHighResolutions && mNativeStageContentScaleFactor != mNativeStage.contentsScaleFactor))
         {
             mPreviousViewPort.setTo(mViewPort.x, mViewPort.y, mViewPort.width, mViewPort.height);
 
@@ -590,8 +591,8 @@ class Starling extends EventDispatcher
                 configureBackBuffer(Std.int(mClippedViewPort.width), Std.int(mClippedViewPort.height),
                     mAntiAliasing, true, mSupportHighResolutions);
 
-                if (mSupportHighResolutions && Reflect.getProperty(mNativeStage, "contentsScaleFactor") != null)
-                    mNativeStageContentScaleFactor = Reflect.getProperty(mNativeStage, "contentsScaleFactor");
+                if (mSupportHighResolutions)
+                    mNativeStageContentScaleFactor = mNativeStage.contentsScaleFactor;
                 else
                     mNativeStageContentScaleFactor = 1.0;
             }
