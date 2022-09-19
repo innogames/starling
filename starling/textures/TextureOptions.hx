@@ -22,16 +22,18 @@ class TextureOptions
     private var mFormat:Context3DTextureFormat;
     private var mMipMapping:Bool;
     private var mOptimizeForRenderToTexture:Bool = false;
+    private var mPremultipliedAlpha:Bool = false;
     private var mOnReady:Void->Void = null;
     private var mRepeat:Bool = false;
     
     public function new(scale:Float=1.0, mipMapping:Bool=false, 
-                                   format:Context3DTextureFormat=BGRA, repeat:Bool=false)
+                                   format:Context3DTextureFormat=BGRA, repeat:Bool=false, premultipliedAlpha:Bool=false)
     {
         mScale = scale;
         mFormat = format;
         mMipMapping = mipMapping;
         mRepeat = repeat;
+        mPremultipliedAlpha = premultipliedAlpha;
     }
     
     /** Creates a clone of the TextureOptions object with the exact same properties. */
@@ -76,6 +78,14 @@ class TextureOptions
     public var repeat(get, set):Bool;
     private function get_repeat():Bool { return mRepeat; }
     private function set_repeat(value:Bool):Bool { return mRepeat = value; }
+
+    /** 
+     * Indicates that the transparency information, the alpha, is already contained in RGB color values, 
+     * alpha values are premultiplied into the RGB values.
+     */
+     public var premultipliedAlpha(get, set):Bool;
+     private function get_premultipliedAlpha():Bool { return mPremultipliedAlpha; }
+     private function set_premultipliedAlpha(value:Bool):Bool { return mPremultipliedAlpha = value; }
 
     /** A callback that is used only for ATF textures; if it is set, the ATF data will be
      * decoded asynchronously. The texture can only be used when the callback has been

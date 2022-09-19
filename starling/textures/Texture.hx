@@ -164,7 +164,7 @@ class Texture
         else if (Std.is(data, ByteArrayData))
         {
             texture = fromAtfData(cast data,
-                options.scale, options.mipMapping, options.onReady, options.repeat);
+                options.scale, options.mipMapping, options.onReady, options.repeat, options.premultipliedAlpha);
         }
         else
             throw new ArgumentError("Unsupported 'data' type: " + Type.getClassName(data));
@@ -286,7 +286,7 @@ class Texture
      * asynchronously. It can only be used when the callback has been executed. This is the
      * expected function definition: <code>function(texture:Texture):void;</code></p> */
     public static function fromAtfData(data:ByteArray, scale:Float=1, useMipMaps:Bool=true,
-                                       async:Void->Void=null, repeat:Bool=false):Texture
+                                       async:Void->Void=null, repeat:Bool=false, premultipliedAlpha:Bool=false):Texture
     {
         if (data == null) return null;
 		var context:Context3D = Starling.current.context;
@@ -297,7 +297,7 @@ class Texture
             atfData.width, atfData.height, atfData.format, false);
         var concreteTexture:ConcreteTexture = new ConcreteTexture(nativeTexture, atfData.format,
             atfData.width, atfData.height, useMipMaps && atfData.numTextures > 1,
-            false, false, scale, repeat);
+            premultipliedAlpha, false, scale, repeat);
 
         concreteTexture.uploadAtfData(data, 0, async);
         concreteTexture.onRestore = function():Void
