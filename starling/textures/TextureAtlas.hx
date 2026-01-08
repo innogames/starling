@@ -10,9 +10,8 @@
 
 package starling.textures;
 
-import flash.geom.Rectangle;
-
 import openfl.Vector;
+import openfl.geom.Rectangle;
 
 /** A texture atlas is a collection of many smaller textures in one big image. This class
  *  is used to access textures from such an atlas.

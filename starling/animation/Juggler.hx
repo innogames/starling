@@ -10,12 +10,9 @@
 
 package starling.animation;
 
-import flash.errors.ArgumentError;
-
 import haxe.Constraints.Function;
-
 import openfl.Vector;
-
+import openfl.errors.ArgumentError;
 import starling.events.Event;
 import starling.events.EventDispatcher;
 

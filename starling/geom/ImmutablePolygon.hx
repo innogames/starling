@@ -1,7 +1,7 @@
 package starling.geom;
 
-import flash.errors.Error;
-import flash.errors.IllegalOperationError;
+import openfl.errors.Error;
+import openfl.errors.IllegalOperationError;
 
 import starling.geom.Polygon;
 

@@ -10,16 +10,14 @@
 
 package starling.text;
 
-import flash.display.BitmapData;
-import flash.geom.Rectangle;
-import flash.utils.ByteArray;
-
 import haxe.Int64;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.zip.InflateImpl;
-
+import openfl.display.BitmapData;
+import openfl.geom.Rectangle;
+import openfl.utils.ByteArray;
 import starling.textures.Texture;
 
 /** @private

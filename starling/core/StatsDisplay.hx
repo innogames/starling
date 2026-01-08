@@ -10,7 +10,7 @@
 
 package starling.core;
 
-import flash.system.System;
+import openfl.system.System;
 
 import starling.display.BlendMode;
 import starling.display.Quad;

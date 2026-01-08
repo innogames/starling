@@ -10,25 +10,23 @@
 
 package starling.core;
 
-import flash.display3D.Context3D;
-import flash.display3D.Context3DBlendFactor;
-import flash.display3D.Context3DCompareMode;
-import flash.display3D.Context3DProgramType;
-import flash.display3D.Context3DStencilAction;
-import flash.display3D.Context3DTextureFormat;
-import flash.display3D.Context3DTriangleFace;
-import flash.display3D.Program3D;
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.geom.Vector3D;
-
 import lime.utils.Float32Array;
-import openfl._internal.renderer.opengl.batcher.BatchRenderer;
-import openfl.utils.AGALMiniAssembler;
 import openfl.Vector;
-
+import openfl._internal.renderer.opengl.batcher.BatchRenderer;
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DBlendFactor;
+import openfl.display3D.Context3DCompareMode;
+import openfl.display3D.Context3DProgramType;
+import openfl.display3D.Context3DStencilAction;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.display3D.Context3DTriangleFace;
+import openfl.display3D.Program3D;
+import openfl.geom.Matrix3D;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.geom.Vector3D;
+import openfl.utils.AGALMiniAssembler;
 import starling.display.BlendMode;
 import starling.display.DisplayObject;
 import starling.display.Quad;

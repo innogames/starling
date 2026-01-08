@@ -1,12 +1,7 @@
 package;
-import flash.system.System;
-import flash.ui.Keyboard;
-#if 0
-import flash.utils.getDefinitionByName;
-#end
-
+import openfl.system.System;
+import openfl.ui.Keyboard;
 import scenes.Scene;
-
 import starling.core.Starling;
 import starling.display.Button;
 import starling.display.Image;
@@ -14,6 +9,10 @@ import starling.display.Sprite;
 import starling.events.Event;
 import starling.events.KeyboardEvent;
 import starling.utils.AssetManager;
+#if 0
+import openfl.utils.getDefinitionByName;
+#end
+
 
 @:keep class Game extends Sprite
 {

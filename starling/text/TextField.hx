@@ -10,27 +10,25 @@
 
 package starling.text;
 
-import flash.display.BitmapData;
-import flash.display.IBitmapDrawable;
-import flash.display.StageQuality;
-import flash.display3D.Context3DTextureFormat;
-import flash.errors.ArgumentError;
-import flash.errors.Error;
-import flash.filters.BitmapFilter;
-import flash.filters.BlurFilter;
-import flash.filters.DropShadowFilter;
-import flash.geom.ColorTransform;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.Lib;
-import flash.text.AntiAliasType;
-import flash.text.Font;
-import flash.text.TextFormat;
-import flash.text.TextFormatAlign;
-
 import haxe.Constraints.Function;
-
+import openfl.Lib;
+import openfl.display.BitmapData;
+import openfl.display.IBitmapDrawable;
+import openfl.display.StageQuality;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.filters.BitmapFilter;
+import openfl.filters.BlurFilter;
+import openfl.filters.DropShadowFilter;
+import openfl.geom.ColorTransform;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.text.AntiAliasType;
+import openfl.text.Font;
+import openfl.text.TextFormat;
+import openfl.text.TextFormatAlign;
 import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.display.DisplayObject;
@@ -42,10 +40,10 @@ import starling.display.Sprite;
 import starling.events.Event;
 import starling.textures.Texture;
 import starling.utils.HAlign;
-import starling.utils.RectangleUtil;
-import starling.utils.VAlign;
 import starling.utils.MathUtil;
 import starling.utils.Max;
+import starling.utils.RectangleUtil;
+import starling.utils.VAlign;
 
 /** A TextField displays text, either using standard true type fonts or custom bitmap fonts.
  *  
@@ -133,7 +131,7 @@ class TextField extends DisplayObjectContainer
     
     /** Helper objects. */
     private static var sHelperMatrix:Matrix = new Matrix();
-    private static var sNativeTextField:flash.text.TextField = new flash.text.TextField();
+    private static var sNativeTextField:openfl.text.TextField = new openfl.text.TextField();
     
     /** Create a new text field with the given properties. */
     public function new(width:Int, height:Int, text:String, fontName:String="_sans",
@@ -261,10 +259,10 @@ class TextField extends DisplayObjectContainer
      * over a range of characters or the complete TextField) to modify the format to
      * your needs.
      * 
-     * @param textField  the flash.text.TextField object that you can format.
+     * @param textField  the openfl.text.TextField object that you can format.
      * @param textFormat the default text format that's currently set on the text field.
      */
-    private function formatText(textField:flash.text.TextField, textFormat:TextFormat):Void {}
+    private function formatText(textField:openfl.text.TextField, textFormat:TextFormat):Void {}
 
     /** Forces a redraw of the current contents right before the display object is rendered.
      * Useful especially in combination with the "formatText" method. */
@@ -374,7 +372,7 @@ class TextField extends DisplayObjectContainer
         return bitmapData;
     }
     
-    private function autoScaleNativeTextField(textField:flash.text.TextField):Void
+    private function autoScaleNativeTextField(textField:openfl.text.TextField):Void
     {
         var size:Int   = Std.int(textField.defaultTextFormat.size);
         var maxHeight:Int = Std.int(textField.height - 4);
@@ -393,7 +391,7 @@ class TextField extends DisplayObjectContainer
         }
     }
     
-    private function calculateFilterOffset(textField:flash.text.TextField,
+    private function calculateFilterOffset(textField:openfl.text.TextField,
                                            hAlign:String, vAlign:String):Point
     {
         var resultOffset:Point = new Point();

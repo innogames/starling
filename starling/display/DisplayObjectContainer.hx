@@ -10,17 +10,15 @@
 
 package starling.display;
 
-import flash.errors.ArgumentError;
-import flash.errors.RangeError;
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.geom.Vector3D;
-import flash.system.Capabilities;
-
 import openfl.Vector;
-
+import openfl.errors.ArgumentError;
+import openfl.errors.RangeError;
+import openfl.geom.Matrix3D;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.geom.Vector3D;
+import openfl.system.Capabilities;
 import starling.core.RenderSupport;
 import starling.events.Event;
 import starling.filters.FragmentFilter;

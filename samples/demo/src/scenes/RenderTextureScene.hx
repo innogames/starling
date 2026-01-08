@@ -1,7 +1,7 @@
 package scenes;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.utils.Dictionary;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.utils.Dictionary;
 import starling.display.DisplayObject;
 import starling.utils.Max;
 
@@ -59,7 +59,7 @@ import openfl.Vector;
         // strictly necessary, but it's faster when you are drawing with several fingers
         // simultaneously.
         
-        mRenderTexture.drawBundled(function(unused0:DisplayObject, unused1:flash.geom.Matrix, unused2:Float):Void
+        mRenderTexture.drawBundled(function(unused0:DisplayObject, unused1:openfl.geom.Matrix, unused2:Float):Void
         {
             var touches:Vector<Touch> = event.getTouches(mCanvas);
         

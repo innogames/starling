@@ -9,35 +9,30 @@
 // =================================================================================================
 
 package starling.textures;
-
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display3D.Context3D;
-import flash.display3D.Context3DProfile;
-import flash.display3D.Context3DTextureFormat;
-import flash.display3D.textures.TextureBase;
-import flash.errors.ArgumentError;
-import flash.geom.Rectangle;
 #if flash
 import flash.media.Camera;
 #end
-import flash.net.NetStream;
-import flash.system.Capabilities;
-
 import haxe.Constraints.Function;
-
 import lime.utils.Float32Array;
-
-import openfl.utils.ByteArray;
 import openfl.Vector;
-
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DProfile;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.display3D.textures.TextureBase;
+import openfl.errors.ArgumentError;
+import openfl.geom.Rectangle;
+import openfl.net.NetStream;
+import openfl.system.Capabilities;
+import openfl.utils.ByteArray;
 import starling.core.Starling;
 import starling.errors.MissingContextError;
 import starling.errors.NotSupportedError;
 import starling.utils.Color;
+import starling.utils.PowerOfTwo.getNextPowerOfTwo;
 import starling.utils.SystemUtil;
 import starling.utils.VertexData;
-import starling.utils.PowerOfTwo.getNextPowerOfTwo;
 
 /** <p>A texture stores the information that represents an image. It cannot be added to the
  *  display list directly; instead it has to be mapped onto a display object. In Starling,
@@ -293,7 +288,7 @@ class Texture
         if (context == null) throw new MissingContextError();
 
         var atfData:AtfData = new AtfData(data);
-		var nativeTexture:flash.display3D.textures.Texture = context.createTexture(
+		var nativeTexture:openfl.display3D.textures.Texture = context.createTexture(
             atfData.width, atfData.height, atfData.format, false);
         var concreteTexture:ConcreteTexture = new ConcreteTexture(nativeTexture, atfData.format,
             atfData.width, atfData.height, useMipMaps && atfData.numTextures > 1,

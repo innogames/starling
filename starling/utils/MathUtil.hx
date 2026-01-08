@@ -10,8 +10,8 @@
 
 package starling.utils;
 
-import flash.geom.Point;
-import flash.geom.Vector3D;
+import openfl.geom.Point;
+import openfl.geom.Vector3D;
 
 /** A utility class containing methods you might need for maths problems. */
 class MathUtil

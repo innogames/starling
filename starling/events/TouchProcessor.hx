@@ -10,12 +10,10 @@
 
 package starling.events;
 
-import flash.errors.Error;
-import flash.geom.Point;
-import flash.Lib;
-
+import openfl.Lib;
 import openfl.Vector;
-
+import openfl.errors.Error;
+import openfl.geom.Point;
 import starling.display.DisplayObject;
 import starling.display.Stage;
 import starling.utils.MathUtil;
@@ -203,7 +201,7 @@ class TouchProcessor
 
     /** Enqueues a new touch our mouse event with the given properties. */
     public function enqueue(touchID:Int, phase:String, globalX:Float, globalY:Float,
-                            pressure:Float=1.0, width:Float=1.0, height:Float=1.0, nativeTarget:Null<flash.display.DisplayObject> = null):Void
+                            pressure:Float=1.0, width:Float=1.0, height:Float=1.0, nativeTarget:Null<openfl.display.DisplayObject> = null):Void
     {
         mQueue.unshift({
             touchID: touchID,
@@ -490,7 +488,7 @@ private typedef TouchData = {
     var phase:String;
     var globalX:Float;
     var globalY:Float;
-    var nativeTarget:Null<flash.display.DisplayObject>;
+    var nativeTarget:Null<openfl.display.DisplayObject>;
     var ?pressure:Float;
     var ?width:Float;
     var ?height:Float;

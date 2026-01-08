@@ -10,10 +10,10 @@
 
 package starling.display;
 
-import flash.errors.ArgumentError;
-import flash.geom.Rectangle;
-import flash.ui.Mouse;
-import flash.ui.MouseCursor;
+import openfl.errors.ArgumentError;
+import openfl.geom.Rectangle;
+import openfl.ui.Mouse;
+import openfl.ui.MouseCursor;
 
 import starling.events.Event;
 import starling.events.Touch;

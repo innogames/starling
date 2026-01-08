@@ -10,22 +10,20 @@
 
 package starling.text;
 
-import flash.errors.ArgumentError;
-import flash.geom.Rectangle;
-import openfl.errors.Error;
-
 import openfl.Vector;
-
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.geom.Rectangle;
 import starling.display.Image;
 import starling.display.QuadBatch;
 import starling.display.Sprite;
+import starling.text.BitmapChar;
 import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
 import starling.textures.TextureSmoothing;
+import starling.utils.ArrayUtil;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
-import starling.utils.ArrayUtil;
-import starling.text.BitmapChar;
 
 /** The BitmapFont class parses bitmap font files and arranges the glyphs 
  *  in the form of a text.

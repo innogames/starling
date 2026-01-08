@@ -10,18 +10,16 @@
 
 package starling.display;
 
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
 import openfl.Vector;
-
+import openfl.geom.Matrix3D;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import starling.core.RenderSupport;
 import starling.events.Event;
 import starling.utils.MatrixUtil;
-import starling.utils.RectangleUtil;
 import starling.utils.Max;
+import starling.utils.RectangleUtil;
 
 /** Dispatched on all children when the object is flattened. */
 @:meta(Event(name="flatten", type="starling.events.Event"))

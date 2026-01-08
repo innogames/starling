@@ -10,17 +10,14 @@
 
 package starling.textures;
 
-import flash.display3D.textures.TextureBase;
-import flash.display3D.Context3DTextureFormat;
-import flash.errors.ArgumentError;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
 import lime.utils.Float32Array;
-
 import openfl.Vector;
-
+import openfl.display3D.Context3DTextureFormat;
+import openfl.display3D.textures.TextureBase;
+import openfl.errors.ArgumentError;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import starling.utils.MatrixUtil;
 import starling.utils.RectangleUtil;
 import starling.utils.VertexData;

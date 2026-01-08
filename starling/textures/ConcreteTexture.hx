@@ -10,24 +10,22 @@
 
 package starling.textures;
 
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display3D.Context3D;
-import flash.display3D.Context3DTextureFormat;
-import flash.display3D.textures.TextureBase;
-import flash.errors.Error;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
 #if flash
 import flash.media.Camera;
 #end
-import flash.net.NetStream;
-import flash.utils.ByteArray;
-import haxe.Timer;
-
 import haxe.Constraints.Function;
-
+import haxe.Timer;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.display3D.textures.TextureBase;
+import openfl.errors.Error;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.net.NetStream;
+import openfl.utils.ByteArray;
 import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.errors.MissingContextError;
@@ -129,9 +127,9 @@ class ConcreteTexture extends Texture
             data = potData;
         }
         
-        if (Std.is(mBase, flash.display3D.textures.Texture))
+        if (Std.is(mBase, openfl.display3D.textures.Texture))
         {
-            var potTexture:flash.display3D.textures.Texture = 
+            var potTexture:openfl.display3D.textures.Texture = 
                 cast mBase;
             
 			if (doAsync){
@@ -163,9 +161,9 @@ class ConcreteTexture extends Texture
                 canvas.dispose();
             }
         }
-        else if (Std.is(mBase, flash.display3D.textures.RectangleTexture))
+        else if (Std.is(mBase, openfl.display3D.textures.RectangleTexture))
         {
-            var baseTexture:flash.display3D.textures.RectangleTexture = cast mBase;
+            var baseTexture:openfl.display3D.textures.RectangleTexture = cast mBase;
             
 			if (doAsync){
 				untyped baseTexture.uploadFromBitmapDataAsync(data);
@@ -195,8 +193,8 @@ class ConcreteTexture extends Texture
     public function uploadAtfData(data:ByteArray, offset:Int=0, async:Dynamic=null):Void
     {
         var isAsync:Bool = Reflect.isFunction(async) || async == true;
-        var potTexture:flash.display3D.textures.Texture = 
-              Std.is(mBase, flash.display3D.textures.Texture) ? cast mBase : null;
+        var potTexture:openfl.display3D.textures.Texture = 
+              Std.is(mBase, openfl.display3D.textures.Texture) ? cast mBase : null;
         
         if (potTexture == null)
             throw new Error("This texture type does not support ATF data");
@@ -227,7 +225,7 @@ class ConcreteTexture extends Texture
     {
         var className:String = Type.getClassName(Type.getClass(mBase));
 
-        if (className == "flash.display3D.textures.VideoTexture")
+        if (className == "openfl.display3D.textures.VideoTexture")
         {
             mDataUploaded = true;
             mTextureReadyCallback = onComplete;
@@ -264,14 +262,14 @@ class ConcreteTexture extends Texture
     {
         var context:Context3D = Starling.current.context;
         
-        if (Std.is(mBase, flash.display3D.textures.Texture))
+        if (Std.is(mBase, openfl.display3D.textures.Texture))
             mBase = context.createTexture(mWidth, mHeight, mFormat, 
                                           mOptimizedForRenderTexture);
-        else if (Std.is(mBase, flash.display3D.textures.RectangleTexture))
+        else if (Std.is(mBase, openfl.display3D.textures.RectangleTexture))
             mBase = context.createRectangleTexture (mWidth, mHeight, mFormat,
                                                       mOptimizedForRenderTexture);
         #if flash
-        else if (Std.is(mBase, flash.display3D.textures.VideoTexture))
+        else if (Std.is(mBase, openfl.display3D.textures.VideoTexture))
             mBase = Reflect.callMethod(context, Reflect.getProperty(context, "createVideoTexture"), []);
         #end
         else

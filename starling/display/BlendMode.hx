@@ -10,8 +10,8 @@
 
 package starling.display;
 
-import flash.display3D.Context3DBlendFactor;
-import flash.errors.ArgumentError;
+import openfl.display3D.Context3DBlendFactor;
+import openfl.errors.ArgumentError;
 
 /** A class that provides constant values for visual blend mode effects. 
  *   
@@ -31,7 +31,7 @@ import flash.errors.ArgumentError;
  *  objects have premultiplied alpha values, while ATF textures haven't. For this reason, 
  *  a blending mode may have different factors depending on the pma value.</p>
  *  
- *  @see flash.display3D.Context3DBlendFactor
+ *  @see openfl.display3D.Context3DBlendFactor
  */
 class BlendMode
 {
