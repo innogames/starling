@@ -1,6 +1,6 @@
 package;
 #if 0
-import flash.utils.getQualifiedClassName;
+import openfl.utils.getQualifiedClassName;
 #end
 
 import scenes.AnimationScene;
@@ -15,11 +15,6 @@ import scenes.Sprite3DScene;
 import scenes.TextScene;
 import scenes.TextureScene;
 import scenes.TouchScene;
-
-#if demo_video
-import scenes.VideoScene;
-#end
-
 import starling.core.Starling;
 import starling.display.Button;
 import starling.display.Image;
@@ -29,6 +24,10 @@ import starling.events.TouchPhase;
 import starling.text.TextField;
 import starling.textures.Texture;
 import starling.utils.VAlign;
+#if demo_video
+import scenes.VideoScene;
+#end
+
 
 class MainMenu extends Sprite
 {

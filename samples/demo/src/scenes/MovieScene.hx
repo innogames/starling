@@ -1,6 +1,6 @@
 package scenes;
 
-import flash.media.Sound;
+import openfl.media.Sound;
 
 import starling.core.Starling;
 import starling.display.MovieClip;

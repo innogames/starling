@@ -10,12 +10,11 @@
 
 package starling.utils;
 
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Point;
-import flash.geom.Vector3D;
-
 import openfl.Vector;
+import openfl.geom.Matrix3D;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Vector3D;
 
 /** A utility class containing methods related to the Matrix class. */
 class MatrixUtil

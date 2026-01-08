@@ -10,10 +10,10 @@
 
 package starling.textures;
 
-import flash.display3D.Context3DTextureFormat;
-import flash.errors.ArgumentError;
-import flash.errors.Error;
-import flash.utils.ByteArray;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.utils.ByteArray;
 
 /** A parser for the ATF data format. */
 class AtfData
@@ -72,7 +72,7 @@ class AtfData
         }
     }
 
-    /** The texture format. @see flash.display3D.textures.Context3DTextureFormat */
+    /** The texture format. @see openfl.display3D.textures.Context3DTextureFormat */
     public var format(get, never):Context3DTextureFormat;
     private function get_format():Context3DTextureFormat { return mFormat; }
 

@@ -10,10 +10,10 @@
 
 package starling.utils;
 
-import flash.errors.ArgumentError;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import openfl.errors.ArgumentError;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 
 /** A utility class containing methods related to the Rectangle class. */
 class RectangleUtil

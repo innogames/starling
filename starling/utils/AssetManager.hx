@@ -10,37 +10,32 @@
 
 package starling.utils;
 
-import flash.display.Bitmap;
-import flash.display.Loader;
-import flash.display.LoaderInfo;
-import flash.display3D.Context3DTextureFormat;
-import flash.errors.ArgumentError;
-import flash.errors.Error;
-import flash.events.HTTPStatusEvent;
-import flash.events.IOErrorEvent;
-import flash.events.ProgressEvent;
-import flash.events.SecurityErrorEvent;
-import flash.media.Sound;
-import flash.media.SoundChannel;
-import flash.media.SoundTransform;
-#if flash
-import flash.net.FileReference;
-#end
-import flash.net.URLLoader;
-import flash.net.URLLoaderDataFormat;
-import flash.net.URLRequest;
 #if flash
 import flash.system.ImageDecodingPolicy;
 #end
-import flash.system.LoaderContext;
-import flash.system.System;
-
 import haxe.Json;
 import haxe.Timer;
-
-import openfl.utils.ByteArray;
 import openfl.Vector;
-
+import openfl.display.Bitmap;
+import openfl.display.Loader;
+import openfl.display.LoaderInfo;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.events.HTTPStatusEvent;
+import openfl.events.IOErrorEvent;
+import openfl.events.ProgressEvent;
+import openfl.events.SecurityErrorEvent;
+import openfl.media.Sound;
+import openfl.media.SoundChannel;
+import openfl.media.SoundTransform;
+import openfl.net.FileReference;
+import openfl.net.URLLoader;
+import openfl.net.URLLoaderDataFormat;
+import openfl.net.URLRequest;
+import openfl.system.LoaderContext;
+import openfl.system.System;
+import openfl.utils.ByteArray;
 import starling.core.Starling;
 import starling.events.Event;
 import starling.events.EventDispatcher;
@@ -545,7 +540,7 @@ class AssetManager extends EventDispatcher
                 for each (childNode in typeXml.variable.(@type == "Class"))
                     enqueueWithName(rawAsset[childNode.@name], childNode.@name);
             }
-            else if (getQualifiedClassName(rawAsset) == "flash.filesystem::File")
+            else if (getQualifiedClassName(rawAsset) == "openfl.filesystem::File")
             {
                 if (!rawAsset["exists"])
                 {
@@ -585,7 +580,7 @@ class AssetManager extends EventDispatcher
                                     options:TextureOptions=null):String
     {
         #if 0
-        if (getQualifiedClassName(asset) == "flash.filesystem::File")
+        if (getQualifiedClassName(asset) == "openfl.filesystem::File")
             asset = decodeURI(asset["url"]);
         #end
         
@@ -1330,7 +1325,7 @@ class AssetManager extends EventDispatcher
     
     /** Specifies whether a check should be made for the existence of a URL policy file before
      * loading an object from a remote server. More information about this topic can be found 
-     * in the 'flash.system.LoaderContext' documentation. @default false */
+     * in the 'openfl.system.LoaderContext' documentation. @default false */
     public var checkPolicyFile(get, set):Bool;
     private function get_checkPolicyFile():Bool { return mCheckPolicyFile; }
     private function set_checkPolicyFile(value:Bool):Bool { return mCheckPolicyFile = value; }

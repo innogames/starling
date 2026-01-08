@@ -10,14 +10,11 @@
 
 package starling.geom;
 
-import flash.errors.ArgumentError;
-import flash.errors.RangeError;
-import flash.geom.Point;
-
 import lime.utils.Float32Array;
-
 import openfl.Vector;
-
+import openfl.errors.ArgumentError;
+import openfl.errors.RangeError;
+import openfl.geom.Point;
 import starling.utils.VectorUtil;
 import starling.utils.VertexData;
 

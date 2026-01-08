@@ -10,13 +10,11 @@
 
 package starling.display;
 
-import flash.errors.ArgumentError;
-import flash.errors.IllegalOperationError;
-import flash.media.Sound;
-import flash.media.SoundTransform;
-
 import openfl.Vector;
-
+import openfl.errors.ArgumentError;
+import openfl.errors.IllegalOperationError;
+import openfl.media.Sound;
+import openfl.media.SoundTransform;
 import starling.animation.IAnimatable;
 import starling.events.Event;
 import starling.textures.Texture;

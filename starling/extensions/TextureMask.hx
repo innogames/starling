@@ -12,14 +12,14 @@ package starling.extensions;
 
 import StringTools;
 import openfl.Vector;
-import flash.display3D.Context3D;
-import flash.display3D.Context3DProgramType;
-import flash.display3D.Context3DVertexBufferFormat;
-import flash.display3D.IndexBuffer3D;
-import flash.display3D.VertexBuffer3D;
-import flash.geom.Matrix;
-import flash.geom.Rectangle;
-import flash.events.Event;
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DProgramType;
+import openfl.display3D.Context3DVertexBufferFormat;
+import openfl.display3D.IndexBuffer3D;
+import openfl.display3D.VertexBuffer3D;
+import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
+import openfl.events.Event;
 
 import starling.core.RenderSupport;
 import starling.core.Starling;

@@ -10,9 +10,9 @@
 
 package starling.textures;
 
-import flash.display3D.Context3DTextureFormat;
-import flash.display3D.textures.TextureBase;
-import flash.errors.ArgumentError;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.display3D.textures.TextureBase;
+import openfl.errors.ArgumentError;
 
 /** A concrete texture that may only be used for a 'VideoTexture' base.
  *  For internal use only. */
@@ -35,7 +35,7 @@ class ConcreteVideoTexture extends ConcreteTexture
         #if flash
         var baseClass:Class<Dynamic> = Type.getClass(base);
         var className:String = Type.getClassName(baseClass);
-        if (className != "flash.display3D.textures.VideoTexture")
+        if (className != "openfl.display3D.textures.VideoTexture")
             throw new ArgumentError("'base' must be VideoTexture");
         #end
     }

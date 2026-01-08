@@ -1,26 +1,23 @@
 package;
 
-import flash.display.Bitmap;
-import flash.display.Loader;
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.geom.Rectangle;
-import flash.system.Capabilities;
-import flash.system.System;
-import flash.utils.ByteArray;
 import haxe.Timer;
-
 import lime.system.System in LimeSystem;
-
+import openfl.display.Bitmap;
+import openfl.display.Loader;
+import openfl.display.Sprite;
+import openfl.events.Event;
+import openfl.geom.Rectangle;
+import openfl.system.Capabilities;
+import openfl.system.System;
+import openfl.utils.ByteArray;
 import starling.core.Starling;
 import starling.events.Event;
 import starling.textures.RenderTexture;
 import starling.utils.AssetManager;
 import starling.utils.RectangleUtil;
 import starling.utils.ScaleMode;
-import starling.utils.SystemUtil;
 import starling.utils.StringUtil.formatString;
-
+import starling.utils.SystemUtil;
 import utils.ProgressBar;
 
 class Scaffold extends Sprite
@@ -69,9 +66,9 @@ class Scaffold extends Sprite
         if (!SystemUtil.isDesktop)
         {
             stage.addEventListener(
-                flash.events.Event.ACTIVATE, function (e):Void { mStarling.start(); });
+                openfl.events.Event.ACTIVATE, function (e):Void { mStarling.start(); });
             stage.addEventListener(
-                flash.events.Event.DEACTIVATE, function (e):Void { mStarling.stop(true); });
+                openfl.events.Event.DEACTIVATE, function (e):Void { mStarling.stop(true); });
         }
     }
 
@@ -133,7 +130,7 @@ class Scaffold extends Sprite
         mBackground.scaleY = 1.0 / scaleFactor;
         mStarling.nativeOverlay.addChild(mBackground);
 
-        mBackground.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE,
+        mBackground.contentLoaderInfo.addEventListener(openfl.events.Event.COMPLETE,
             function(e:Dynamic):Void
             {
                 cast (mBackground.content, Bitmap).smoothing = true;

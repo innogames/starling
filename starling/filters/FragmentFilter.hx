@@ -10,26 +10,24 @@
 
 package starling.filters;
 
-import flash.geom.Point;
-import flash.errors.ArgumentError;
-import flash.errors.Error;
-import flash.display3D.Context3D;
-import flash.display3D.Context3DProgramType;
-import flash.display3D.Context3DMipFilter;
-import flash.display3D.Context3DTextureFilter;
-import flash.display3D.Context3DVertexBufferFormat;
-import flash.display3D.Context3DWrapMode;
-import flash.display3D.IndexBuffer3D;
-import flash.display3D.Program3D;
-import flash.display3D.VertexBuffer3D;
-import flash.errors.IllegalOperationError;
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Rectangle;
-import flash.system.Capabilities;
-
 import openfl.Vector;
-
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DMipFilter;
+import openfl.display3D.Context3DProgramType;
+import openfl.display3D.Context3DTextureFilter;
+import openfl.display3D.Context3DVertexBufferFormat;
+import openfl.display3D.Context3DWrapMode;
+import openfl.display3D.IndexBuffer3D;
+import openfl.display3D.Program3D;
+import openfl.display3D.VertexBuffer3D;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.errors.IllegalOperationError;
+import openfl.geom.Matrix3D;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.system.Capabilities;
 import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.display.BlendMode;
@@ -41,10 +39,10 @@ import starling.errors.MissingContextError;
 import starling.events.Event;
 import starling.textures.Texture;
 import starling.utils.MatrixUtil;
+import starling.utils.PowerOfTwo;
 import starling.utils.RectangleUtil;
 import starling.utils.SystemUtil;
 import starling.utils.VertexData;
-import starling.utils.PowerOfTwo;
 
 /** The FragmentFilter class is the base class for all filter effects in Starling.
  *  All other filters of this package extend this class. You can attach them to any display

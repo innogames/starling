@@ -10,22 +10,20 @@
 
 package starling.display;
 
-import flash.geom.ColorTransform;
-import flash.display.Bitmap;
-import flash.errors.ArgumentError;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
 import openfl._internal.renderer.opengl.batcher.Quad as BatcherQuad;
 import openfl._internal.renderer.opengl.batcher.QuadTextureData as BatcherQuadTextureData;
-
+import openfl.display.Bitmap;
+import openfl.errors.ArgumentError;
+import openfl.geom.ColorTransform;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import starling.core.RenderSupport;
+import starling.core.Starling;
 import starling.textures.Texture;
 import starling.textures.TextureSmoothing;
-import starling.utils.VertexData;
 import starling.utils.BlendModeUtils;
-import starling.core.Starling;
+import starling.utils.VertexData;
 
 /** An Image is a quad with a texture mapped onto it.
  *  

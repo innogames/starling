@@ -10,18 +10,15 @@
 
 package starling.utils;
 
-import flash.display3D.Context3D;
-import flash.events.Event;
-import flash.events.EventDispatcher;
-import flash.system.Capabilities;
-import flash.Lib;
-
 import haxe.Constraints.Function;
-
 import lime.app.Application;
 import lime.app.Config.WindowConfig;
-
+import openfl.Lib;
+import openfl.display3D.Context3D;
 import openfl.errors.Error;
+import openfl.events.Event;
+import openfl.events.EventDispatcher;
+import openfl.system.Capabilities;
 
 /** A utility class with methods related to the current platform and runtime. */
 class SystemUtil

@@ -11,27 +11,24 @@
 package starling.display;
 
 import lime.graphics.opengl.GLVertexArrayObject;
-
-import flash.errors.Error;
-import flash.display3D.Context3D;
-import flash.display3D.Context3DBufferUsage;
-import flash.display3D.Context3DProfile;
-import flash.display3D.Context3DProgramType;
-import flash.display3D.Context3DMipFilter;
-import flash.display3D.Context3DTextureFilter;
-import flash.display3D.Context3DTextureFormat;
-import flash.display3D.Context3DVertexBufferFormat;
-import flash.display3D.Context3DWrapMode;
-import flash.display3D.IndexBuffer3D;
-import flash.display3D.Program3D;
-import flash.display3D.VertexBuffer3D;
-import flash.errors.IllegalOperationError;
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Rectangle;
-
 import openfl.Vector;
-
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DBufferUsage;
+import openfl.display3D.Context3DMipFilter;
+import openfl.display3D.Context3DProfile;
+import openfl.display3D.Context3DProgramType;
+import openfl.display3D.Context3DTextureFilter;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.display3D.Context3DVertexBufferFormat;
+import openfl.display3D.Context3DWrapMode;
+import openfl.display3D.IndexBuffer3D;
+import openfl.display3D.Program3D;
+import openfl.display3D.VertexBuffer3D;
+import openfl.errors.Error;
+import openfl.errors.IllegalOperationError;
+import openfl.geom.Matrix3D;
+import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
 import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.errors.MissingContextError;

@@ -10,11 +10,9 @@
 
 package starling.events;
 
-import flash.geom.Matrix;
-import flash.geom.Point;
-
 import openfl.Vector;
-
+import openfl.geom.Matrix;
+import openfl.geom.Point;
 import starling.display.DisplayObject;
 import starling.utils.StringUtil;
 
@@ -38,7 +36,7 @@ import starling.utils.StringUtil;
  */
 class Touch
 {
-    public var nativeTarget:Null<flash.display.DisplayObject>;
+    public var nativeTarget:Null<openfl.display.DisplayObject>;
 
     private var mID:Int;
     private var mGlobalX:Float;

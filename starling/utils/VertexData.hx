@@ -10,16 +10,14 @@
 
 package starling.utils;
 
-import flash.errors.ArgumentError;
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.geom.Vector3D;
-
 import lime.utils.Float32Array;
-
 import openfl.Vector;
+import openfl.errors.ArgumentError;
+import openfl.geom.Matrix3D;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.geom.Vector3D;
 
 /** The VertexData class manages a raw list of vertex information, allowing direct upload
  *  to Stage3D vertex buffers. <em>You only have to work with this class if you create display 

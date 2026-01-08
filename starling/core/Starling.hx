@@ -10,44 +10,41 @@
 
 package starling.core;
 
-import lime.utils.Float32Array;
-import flash.display.Shape;
-import flash.display.Sprite;
-import flash.display.Stage3D;
-import flash.display.Stage in FlashStage;
-import flash.display.StageAlign;
-import flash.display.StageScaleMode;
-import flash.display3D.Context3D;
-import flash.display3D.Context3DCompareMode;
-import flash.display3D.Context3DProfile;
-import flash.display3D.Context3DRenderMode;
-import flash.display3D.Context3DTriangleFace;
-import flash.display3D.Program3D;
-import flash.errors.ArgumentError;
-import flash.errors.Error;
-import flash.errors.IllegalOperationError;
-import flash.events.ErrorEvent;
-import flash.events.Event;
-import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
-import flash.events.TouchEvent;
-import flash.geom.Rectangle;
-import flash.system.Capabilities;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
-import flash.text.TextFormatAlign;
-import flash.ui.KeyLocation;
-import flash.ui.Mouse;
-import flash.ui.Multitouch;
-import flash.ui.MultitouchInputMode;
-import flash.utils.ByteArray;
-import flash.Lib;
-
 import haxe.Timer;
-
+import lime.utils.Float32Array;
+import openfl.Lib;
 import openfl.Vector;
-
+import openfl.display.Shape;
+import openfl.display.Sprite;
+import openfl.display.Stage in FlashStage;
+import openfl.display.Stage3D;
+import openfl.display.StageAlign;
+import openfl.display.StageScaleMode;
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DCompareMode;
+import openfl.display3D.Context3DProfile;
+import openfl.display3D.Context3DRenderMode;
+import openfl.display3D.Context3DTriangleFace;
+import openfl.display3D.Program3D;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.errors.IllegalOperationError;
+import openfl.events.ErrorEvent;
+import openfl.events.Event;
+import openfl.events.KeyboardEvent;
+import openfl.events.MouseEvent;
+import openfl.events.TouchEvent;
+import openfl.geom.Rectangle;
+import openfl.system.Capabilities;
+import openfl.text.TextField;
+import openfl.text.TextFieldAutoSize;
+import openfl.text.TextFormat;
+import openfl.text.TextFormatAlign;
+import openfl.ui.KeyLocation;
+import openfl.ui.Mouse;
+import openfl.ui.Multitouch;
+import openfl.ui.MultitouchInputMode;
+import openfl.utils.ByteArray;
 import starling.animation.Juggler;
 import starling.display.DisplayObject;
 import starling.display.Stage;
@@ -226,8 +223,8 @@ class Starling extends EventDispatcher
     private var mPreviousViewPort:Rectangle;
     private var mClippedViewPort:Rectangle;
 
-    private var mNativeStage:flash.display.Stage;
-    private var mNativeOverlay:flash.display.Sprite;
+    private var mNativeStage:openfl.display.Stage;
+    private var mNativeOverlay:openfl.display.Sprite;
     private var mNativeStageContentScaleFactor:Float;
 
     private static var sCurrent:Starling;
@@ -262,7 +259,7 @@ class Starling extends EventDispatcher
      *                   </ul>
      */
     @:access(starling.display.Stage.new)
-    public function new(rootClass:Class<Dynamic>, stage:flash.display.Stage,
+    public function new(rootClass:Class<Dynamic>, stage:openfl.display.Stage,
                              viewPort:Rectangle=null, stage3D:Stage3D=null,
                              renderMode:Context3DRenderMode=AUTO, profile:Dynamic="auto")
     {
@@ -770,7 +767,7 @@ class Starling extends EventDispatcher
     {
         if (!mStarted) return;
 
-        var nativeTarget:Null<flash.display.DisplayObject> = event.target;
+        var nativeTarget:Null<openfl.display.DisplayObject> = event.target;
         if (nativeTarget == mNativeStage) nativeTarget = null;
 
         var globalX:Float;
@@ -1119,8 +1116,8 @@ class Starling extends EventDispatcher
     private function get_stage3D():Stage3D { return mStage3D; }
 
     /** The Flash (2D) stage object Starling renders beneath. */
-    public var nativeStage(get, never):flash.display.Stage;
-    private function get_nativeStage():flash.display.Stage { return mNativeStage; }
+    public var nativeStage(get, never):openfl.display.Stage;
+    private function get_nativeStage():openfl.display.Stage { return mNativeStage; }
 
     /** The instance of the root class provided in the constructor. Available as soon as
      * the event 'ROOT_CREATED' has been dispatched. */

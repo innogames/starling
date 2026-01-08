@@ -1,5 +1,5 @@
 package scenes;
-import flash.display3D.Context3DTriangleFace;
+import openfl.display3D.Context3DTriangleFace;
 
 import starling.core.RenderSupport;
 import starling.core.Starling;

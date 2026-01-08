@@ -1,5 +1,5 @@
 package scenes;
-import flash.geom.Point;
+import openfl.geom.Point;
 
 import starling.core.Starling;
 import starling.display.Canvas;

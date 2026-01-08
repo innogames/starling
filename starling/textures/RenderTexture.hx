@@ -10,13 +10,12 @@
 
 package starling.textures;
 
-import flash.display3D.Context3D;
-import flash.display3D.Context3DTextureFormat;
-import flash.display3D.VertexBuffer3D;
-import flash.display3D.textures.TextureBase;
-import flash.geom.Matrix;
-import flash.geom.Rectangle;
-
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.display3D.VertexBuffer3D;
+import openfl.display3D.textures.TextureBase;
+import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
 import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.display.BlendMode;
@@ -24,8 +23,8 @@ import starling.display.DisplayObject;
 import starling.display.Image;
 import starling.errors.MissingContextError;
 import starling.filters.FragmentFilter;
-import starling.utils.SystemUtil;
 import starling.utils.PowerOfTwo.getNextPowerOfTwo;
+import starling.utils.SystemUtil;
 
 /** A RenderTexture is a dynamic texture onto which you can draw any display object.
  * 

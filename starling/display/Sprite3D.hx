@@ -10,11 +10,11 @@
 
 package starling.display;
 
-import flash.errors.Error;
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
-import flash.geom.Point;
-import flash.geom.Vector3D;
+import openfl.errors.Error;
+import openfl.geom.Matrix;
+import openfl.geom.Matrix3D;
+import openfl.geom.Point;
+import openfl.geom.Vector3D;
 
 import starling.core.RenderSupport;
 import starling.events.Event;
